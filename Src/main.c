@@ -52,13 +52,13 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// Параметры
-uint8_t ModulesCount_Par = 1; // Количество релейных модулей
-uint8_t InputsCount_Par = 4; // Количество входов в модуле
-uint8_t OutputsCount_Par = 4; // Количество выходов в модуле
-uint8_t InOutOrder_Par = OUT_IN;  // Параметр, отвечающий за порядок расположения на разъемах - входы/выходы или выходы/входы
-uint8_t IODisplayMode_Par = NUMBERS; // Параметр отображения входов/выходов (цифрами или именами)
-// Флаги задач
+// РџР°СЂР°РјРµС‚СЂС‹
+uint8_t ModulesCount_Par = 1; // РљРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР»РµР№РЅС‹С… РјРѕРґСѓР»РµР№
+uint8_t InputsCount_Par = 4; // РљРѕР»РёС‡РµСЃС‚РІРѕ РІС…РѕРґРѕРІ РІ РјРѕРґСѓР»Рµ
+uint8_t OutputsCount_Par = 4; // РљРѕР»РёС‡РµСЃС‚РІРѕ РІС‹С…РѕРґРѕРІ РІ РјРѕРґСѓР»Рµ
+uint8_t InOutOrder_Par = OUT_IN;  // РџР°СЂР°РјРµС‚СЂ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РїРѕСЂСЏРґРѕРє СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ РЅР° СЂР°Р·СЉРµРјР°С… - РІС…РѕРґС‹/РІС‹С…РѕРґС‹ РёР»Рё РІС‹С…РѕРґС‹/РІС…РѕРґС‹
+uint8_t IODisplayMode_Par = NUMBERS; // РџР°СЂР°РјРµС‚СЂ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІС…РѕРґРѕРІ/РІС‹С…РѕРґРѕРІ (С†РёС„СЂР°РјРё РёР»Рё РёРјРµРЅР°РјРё)
+// Р¤Р»Р°РіРё Р·Р°РґР°С‡
 volatile uint8_t DeBouncer_Task = FALSE;
 volatile uint8_t CountdownLongPress_Task = FALSE;
 volatile uint8_t ScanButtonsShort_Task = FALSE;
@@ -66,26 +66,26 @@ volatile uint8_t ScanButtonsLong_Task = FALSE;
 volatile uint8_t RelaysUpdate_Task = FALSE;
 volatile uint8_t RelaysModuleUpdate_Task = FALSE;
 volatile uint8_t DisplayUpdate_Task = FALSE;
-// Дополнительные флаги
-volatile uint8_t AllowSaveMute_Flag = FALSE; // Флаг разрешения сохранения состояния MUTE
-volatile uint8_t AllowInputChange_Flag = FALSE; // Флаг разрешения изменения количества модулей (введена, чтобы не допустить изменение параметра при входе в режим настройки)
-// Таймеры
+// Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ С„Р»Р°РіРё
+volatile uint8_t AllowSaveMute_Flag = FALSE; // Р¤Р»Р°Рі СЂР°Р·СЂРµС€РµРЅРёСЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ MUTE
+volatile uint8_t AllowInputChange_Flag = FALSE; // Р¤Р»Р°Рі СЂР°Р·СЂРµС€РµРЅРёСЏ РёР·РјРµРЅРµРЅРёСЏ РєРѕР»РёС‡РµСЃС‚РІР° РјРѕРґСѓР»РµР№ (РІРІРµРґРµРЅР°, С‡С‚РѕР±С‹ РЅРµ РґРѕРїСѓСЃС‚РёС‚СЊ РёР·РјРµРЅРµРЅРёРµ РїР°СЂР°РјРµС‚СЂР° РїСЂРё РІС…РѕРґРµ РІ СЂРµР¶РёРј РЅР°СЃС‚СЂРѕР№РєРё)
+// РўР°Р№РјРµСЂС‹
 volatile uint16_t DeBouncer_Timer = DEBOUCE_TIME;
 volatile uint16_t LongPress_Timer = LONGPRESS_TIME;
 volatile uint16_t DisplayUpdate_Timer = DISPLAYUPDATE_TIME;
-// Переменные состояния
-uint8_t System_State = STANDBY; // Текущий режим работы устройства
-uint8_t SetupStage_State = 0; // Текущий этап режима настройки
-uint8_t Mute_State = FALSE; // Переменная состояния режима MUTE
-uint8_t Lock_State = FALSE; // переменная состояния блокировки изменения входов и выходов
-uint8_t ActiveInput = 0;  // Текущий вход
-uint8_t ActiveOutput = 0; // Текущий выход
-// Состояния кнопок
-uint8_t PowerButton_State = OPEN; // Переменная состояния кнопки POWER
-uint8_t InputButton_State = OPEN; // Переменная состояния кнопки INPUT
-uint8_t OutputButton_State = OPEN; // Переменная состояния кнопки OUTPUT
-uint8_t LockButton_State = OPEN; // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
-uint8_t MuteButton_State = OPEN; // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
+// РџРµСЂРµРјРµРЅРЅС‹Рµ СЃРѕСЃС‚РѕСЏРЅРёСЏ
+uint8_t System_State = STANDBY; // РўРµРєСѓС‰РёР№ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹ СѓСЃС‚СЂРѕР№СЃС‚РІР°
+uint8_t SetupStage_State = 0; // РўРµРєСѓС‰РёР№ СЌС‚Р°Рї СЂРµР¶РёРјР° РЅР°СЃС‚СЂРѕР№РєРё
+uint8_t Mute_State = FALSE; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ СЂРµР¶РёРјР° MUTE
+uint8_t Lock_State = FALSE; // РїРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ Р±Р»РѕРєРёСЂРѕРІРєРё РёР·РјРµРЅРµРЅРёСЏ РІС…РѕРґРѕРІ Рё РІС‹С…РѕРґРѕРІ
+uint8_t ActiveInput = 0;  // РўРµРєСѓС‰РёР№ РІС…РѕРґ
+uint8_t ActiveOutput = 0; // РўРµРєСѓС‰РёР№ РІС‹С…РѕРґ
+// РЎРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРѕРє
+uint8_t PowerButton_State = OPEN; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё POWER
+uint8_t InputButton_State = OPEN; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё INPUT
+uint8_t OutputButton_State = OPEN; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё OUTPUT
+uint8_t LockButton_State = OPEN; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё LOCK (РґРѕР»РіРѕРµ РЅР°Р¶Р°С‚РёРµ INPUT)
+uint8_t MuteButton_State = OPEN; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё MUTE (РґРѕР»РіРѕРµ РЅР°Р¶Р°С‚РёРµ OUTPUT)
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -151,28 +151,28 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      // Если есть задача сканировать короткие нажатия кнопок
+      // Р•СЃР»Рё РµСЃС‚СЊ Р·Р°РґР°С‡Р° СЃРєР°РЅРёСЂРѕРІР°С‚СЊ РєРѕСЂРѕС‚РєРёРµ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРѕРє
       if (ScanButtonsShort_Task == TRUE)
       {
           ScanButtonsShort_Task = FALSE;
           ScanButtonsShort();
       }
 
-      // Если есть задача сканировать долгие нажатия кнопок
+      // Р•СЃР»Рё РµСЃС‚СЊ Р·Р°РґР°С‡Р° СЃРєР°РЅРёСЂРѕРІР°С‚СЊ РґРѕР»РіРёРµ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРѕРє
       if (ScanButtonsLong_Task == TRUE)
       {
           ScanButtonsLong_Task = FALSE;
           ScanButtonsLong();
       }
 
-      // Если есть задача отправить данные в релейный модуль
+      // Р•СЃР»Рё РµСЃС‚СЊ Р·Р°РґР°С‡Р° РѕС‚РїСЂР°РІРёС‚СЊ РґР°РЅРЅС‹Рµ РІ СЂРµР»РµР№РЅС‹Р№ РјРѕРґСѓР»СЊ
       if (RelaysUpdate_Task == TRUE)
       {
           RelaysUpdate_Task = FALSE;
           //RelaysModule_Update();
       }
 
-      // Если есть задача обновления дисплея
+      // Р•СЃР»Рё РµСЃС‚СЊ Р·Р°РґР°С‡Р° РѕР±РЅРѕРІР»РµРЅРёСЏ РґРёСЃРїР»РµСЏ
       if (DisplayUpdate_Task == TRUE)
       {
           DisplayUpdate_Task = FALSE;
@@ -232,8 +232,8 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 
 /**
-  * @brief  Функция отключает светодиод питания.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕС‚РєР»СЋС‡Р°РµС‚ СЃРІРµС‚РѕРґРёРѕРґ РїРёС‚Р°РЅРёСЏ.
+  * @retval РќРµС‚
   */
 inline void PowerLED_Off(void)
 {
@@ -241,8 +241,8 @@ inline void PowerLED_Off(void)
 }
 
 /**
-  * @brief  Функция включает светодиод питания.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РІРєР»СЋС‡Р°РµС‚ СЃРІРµС‚РѕРґРёРѕРґ РїРёС‚Р°РЅРёСЏ.
+  * @retval РќРµС‚
   */
 inline void PowerLED_On(void)
 {
@@ -250,79 +250,79 @@ inline void PowerLED_On(void)
 }
 
 /**
-  * @brief  Функция опроса коротких нажатий кнопок.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕРїСЂРѕСЃР° РєРѕСЂРѕС‚РєРёС… РЅР°Р¶Р°С‚РёР№ РєРЅРѕРїРѕРє.
+  * @retval РќРµС‚
   */
 void ScanButtonsShort(void)
 {
-    // Проверить нажатие кнопки POWER
-    if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
+    // РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё POWER
+    if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_RESET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
-        CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј С‚Р°Р№РјРµСЂ РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
+        CountdownLongPress_Task = TRUE;   // РЎС‚Р°РІРёРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
         (PowerButton_State == OPEN) ? (PowerButton_State = CLOSE) : (PowerButton_State = OPEN);
     }
-    else if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_SET) // Ветка выполняется при отпускании кнопки
+    else if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_SET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РѕС‚РїСѓСЃРєР°РЅРёРё РєРЅРѕРїРєРё
     {
         if (PowerButton_State == CLOSE)
         {
-            CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
+            CountdownLongPress_Task = FALSE; // РЎРЅРёРјР°РµРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
             PowerButton_State = OPEN;
             //-----------------------------------------------------------------
-            // Зафиксировано короткое нажатие кнопки POWER
+            // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РєРѕСЂРѕС‚РєРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё POWER
             //-----------------------------------------------------------------
             if (System_State == STANDBY)
             {
-                PowerLED_Off();        // Отключить светодиод питания
+                PowerLED_Off();        // РћС‚РєР»СЋС‡РёС‚СЊ СЃРІРµС‚РѕРґРёРѕРґ РїРёС‚Р°РЅРёСЏ
                 disp1color_Wake();
-                // Приветствие
+                // РџСЂРёРІРµС‚СЃС‚РІРёРµ
                 disp1color_FillScreenbuff(0);
                 //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
 
                 #ifndef RUS_LANG
                 disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
                 disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
-                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "© M.Tsaryov, %d.3", 2020);
+                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "В© M.Tsaryov, %d.3", 2020);
                 #else
-                disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
-                disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
-                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "© М.Царёв, %d.3", 2020);
+                disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "РђСѓРґРёРѕ");
+                disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "РєРѕРјРјСѓС‚Р°С‚РѕСЂ");
+                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "В© Рњ.Р¦Р°СЂС‘РІ, %d.3", 2020);
                 #endif
                 disp1color_UpdateFromBuff();
                 HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
                 HAL_Delay(WELCOME_TIME);
                 HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
-                System_State = NORMAL; // Сменить режим работы
+                System_State = NORMAL; // РЎРјРµРЅРёС‚СЊ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹
                 AllowSaveMute_Flag = TRUE;
                 RelaysModuleUpdate_Task = TRUE;
             }
-            // Если текущий режим NORMAL, переключиться в дежурный режим
+            // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РІ РґРµР¶СѓСЂРЅС‹Р№ СЂРµР¶РёРј
             else if (System_State == NORMAL)
             {
-                System_State = STANDBY;         // Сменить режим работы
-                // Погасить экран
+                System_State = STANDBY;         // РЎРјРµРЅРёС‚СЊ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹
+                // РџРѕРіР°СЃРёС‚СЊ СЌРєСЂР°РЅ
                 disp1color_Sleep();
-                // Отключить выходы и обновить состояние релейного модуля, не сохраняя режим MUTE
+                // РћС‚РєР»СЋС‡РёС‚СЊ РІС‹С…РѕРґС‹ Рё РѕР±РЅРѕРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ, РЅРµ СЃРѕС…СЂР°РЅСЏСЏ СЂРµР¶РёРј MUTE
                 AllowSaveMute_Flag = FALSE;
                 Mute_State = ON;
                 RelaysModuleUpdate_Task = TRUE;
-                PowerLED_On(); // Включить светодиод питания
+                PowerLED_On(); // Р’РєР»СЋС‡РёС‚СЊ СЃРІРµС‚РѕРґРёРѕРґ РїРёС‚Р°РЅРёСЏ
             }
-            // Если текущий режим SETUP
+            // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
             else if (System_State == SETUP)
             {
-                // Если сейчас 1 этап настройка, переключиться на 2 этап
+                // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 1 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєР°, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РЅР° 2 СЌС‚Р°Рї
                 if (SetupStage_State == SETUP_PAGE1)
                 {
                     SetupStage_State = SETUP_PAGE2;
                 }
-                // Если сейчас 2 этап настройки, переключиться на 3 этап
+                // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 2 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РЅР° 3 СЌС‚Р°Рї
                 else if (SetupStage_State == SETUP_PAGE2)
                 {
                     SetupStage_State = SETUP_PAGE3;
                 }
-                // Если сейчас 3 этап настройки, переключиться на NORMAL
+                // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 3 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РЅР° NORMAL
                 else if (SetupStage_State == SETUP_PAGE3)
                 {
                     System_State = NORMAL;
@@ -334,39 +334,39 @@ void ScanButtonsShort(void)
         }
     }
 
-    // Проверить нажатие кнопки INPUT
-    if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
+    // РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё INPUT
+    if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_RESET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
-        CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј С‚Р°Р№РјРµСЂ РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
+        CountdownLongPress_Task = TRUE;   // РЎС‚Р°РІРёРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
         (InputButton_State == OPEN) ? (InputButton_State = CLOSE) : (InputButton_State = OPEN);
     }
-    else if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_SET) // Ветка выполняется при отпускании кнопки
+    else if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_SET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РѕС‚РїСѓСЃРєР°РЅРёРё РєРЅРѕРїРєРё
     {
         if (InputButton_State == CLOSE)
         {
-            CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
+            CountdownLongPress_Task = FALSE; // РЎРЅРёРјР°РµРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
             InputButton_State = OPEN;
             //-----------------------------------------------------------------
-            // Зафиксировано короткое нажатие кнопки INPUT
+            // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РєРѕСЂРѕС‚РєРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё INPUT
             //-----------------------------------------------------------------
-            // Если текущий режим NORMAL
+            // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
             if (System_State == NORMAL)
             {
-                // Сменить вход, если не включена блокировка
+                // РЎРјРµРЅРёС‚СЊ РІС…РѕРґ, РµСЃР»Рё РЅРµ РІРєР»СЋС‡РµРЅР° Р±Р»РѕРєРёСЂРѕРІРєР°
                 if (Lock_State == OFF)
                 {
-                    // Если вход не последний, инкрементировать вход, иначе включить первый 
+                    // Р•СЃР»Рё РІС…РѕРґ РЅРµ РїРѕСЃР»РµРґРЅРёР№, РёРЅРєСЂРµРјРµРЅС‚РёСЂРѕРІР°С‚СЊ РІС…РѕРґ, РёРЅР°С‡Рµ РІРєР»СЋС‡РёС‚СЊ РїРµСЂРІС‹Р№ 
                     (ActiveInput < (InputsCount_Par - 1)) ? (ActiveInput++) : (ActiveInput = 0);
-                    // Обновить состояние релейного модуля
+                    // РћР±РЅРѕРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ
                     RelaysModuleUpdate_Task = TRUE;
-                    // Передать по USB
+                    // РџРµСЂРµРґР°С‚СЊ РїРѕ USB
                     char str_tx[31];
                     sprintf(str_tx, "Input %d\r\n", ActiveInput);
                     CDC_Transmit_FS((unsigned char *)str_tx, strlen(str_tx));
                 }
             }
-            // Если текущий режим SETUP
+            // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
             else if (System_State == SETUP)
             {
                 if (SetupStage_State == SETUP_PAGE1)
@@ -390,16 +390,16 @@ void ScanButtonsShort(void)
                         OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
                     }
 
-                    // Сбросить включенный вход на значение по умолчанию,
-                    // если он не попадает в настройки количества входов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
                     if (ActiveInput + 1 > InputsCount_Par)
                     {
                         Mute_State = ON;
                         ActiveInput = 0;
                     }
 
-                    // Сбросить включенный выход на значение по умолчанию,
-                    // если он не попадает в настройки количества выходов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
                     if (ActiveOutput + 1 > OutputsCount_Par)
                     {
                         Mute_State = ON;
@@ -420,16 +420,16 @@ void ScanButtonsShort(void)
 
                     OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
 
-                    // Сбросить включенный вход на значение по умолчанию,
-                    // если он не попадает в настройки количества входов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
                     if (ActiveInput + 1 > InputsCount_Par)
                     {
                         Mute_State = ON;
                         ActiveInput = 0;
                     }
 
-                    // Сбросить включенный выход на значение по умолчанию,
-                    // если он не попадает в настройки количества выходов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
                     if (ActiveOutput + 1 > OutputsCount_Par)
                     {
                         Mute_State = ON;
@@ -445,39 +445,39 @@ void ScanButtonsShort(void)
         }
     }
 
-    // Проверить нажатие кнопки OUTPUT
-    if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
+    // РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё OUTPUT
+    if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_RESET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
-        CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј С‚Р°Р№РјРµСЂ РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
+        CountdownLongPress_Task = TRUE;   // РЎС‚Р°РІРёРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
         (OutputButton_State == OPEN) ? (OutputButton_State = CLOSE) : (OutputButton_State = OPEN);
     }
-    else if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_SET) // Ветка выполняется при отпускании кнопки
+    else if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_SET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РѕС‚РїСѓСЃРєР°РЅРёРё РєРЅРѕРїРєРё
     {
         if (OutputButton_State == CLOSE)
         {
-            CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
+            CountdownLongPress_Task = FALSE; // РЎРЅРёРјР°РµРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
             OutputButton_State = OPEN;
             //-----------------------------------------------------------------
-            // Зафиксировано короткое нажатие кнопки OUTPUT
+            // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РєРѕСЂРѕС‚РєРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё OUTPUT
             //-----------------------------------------------------------------
-            // Если текущий режим NORMAL
+            // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
             if (System_State == NORMAL)
             {
-                // Сменить выход, если не включена блокировка
+                // РЎРјРµРЅРёС‚СЊ РІС‹С…РѕРґ, РµСЃР»Рё РЅРµ РІРєР»СЋС‡РµРЅР° Р±Р»РѕРєРёСЂРѕРІРєР°
                 if (Lock_State == OFF)
                 {
-                    // Если выход не последний, инкрементировать вход, иначе включить первый
+                    // Р•СЃР»Рё РІС‹С…РѕРґ РЅРµ РїРѕСЃР»РµРґРЅРёР№, РёРЅРєСЂРµРјРµРЅС‚РёСЂРѕРІР°С‚СЊ РІС…РѕРґ, РёРЅР°С‡Рµ РІРєР»СЋС‡РёС‚СЊ РїРµСЂРІС‹Р№
                     (ActiveOutput < (OutputsCount_Par - 1)) ? (ActiveOutput++) : (ActiveOutput = 0);
-                    // Обновить состояние релейного модуля
+                    // РћР±РЅРѕРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ
                     RelaysModuleUpdate_Task = TRUE;
-                    // Передать по USB
+                    // РџРµСЂРµРґР°С‚СЊ РїРѕ USB
                     char str_tx[31];
                     sprintf(str_tx, "Output %d\r\n", ActiveOutput);
                     CDC_Transmit_FS((unsigned char *)str_tx, strlen(str_tx));
                 }
             }
-            // Если текущий режим SETUP
+            // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
             else if (System_State == SETUP)
             {
                 if (SetupStage_State == SETUP_PAGE1)
@@ -501,16 +501,16 @@ void ScanButtonsShort(void)
                         OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
                     }
 
-                    // Сбросить включенный вход на значение по умолчанию,
-                    // если он не попадает в настройки количества входов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
                     if (ActiveInput + 1 > InputsCount_Par)
                     {
                         Mute_State = ON;
                         ActiveInput = 0;
                     }
 
-                    // Сбросить включенный выход на значение по умолчанию,
-                    // если он не попадает в настройки количества выходов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
                     if (ActiveOutput + 1 > OutputsCount_Par)
                     {
                         Mute_State = ON;
@@ -531,16 +531,16 @@ void ScanButtonsShort(void)
 
                     InputsCount_Par = ModulesCount_Par * RELAY_CNT - OutputsCount_Par;
 
-                    // Сбросить включенный вход на значение по умолчанию,
-                    // если он не попадает в настройки количества входов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
                     if (ActiveInput + 1 > InputsCount_Par)
                     {
                         Mute_State = ON;
                         ActiveInput = 0;
                     }
 
-                    // Сбросить включенный выход на значение по умолчанию,
-                    // если он не попадает в настройки количества выходов
+                    // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+                    // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
                     if (ActiveOutput + 1 > OutputsCount_Par)
                     {
                         Mute_State = ON;
@@ -556,12 +556,12 @@ void ScanButtonsShort(void)
         }
     }
 
-    DisplayUpdate_Task = TRUE; // Ставим флаг задачи обновления дисплея
+    DisplayUpdate_Task = TRUE; // РЎС‚Р°РІРёРј С„Р»Р°Рі Р·Р°РґР°С‡Рё РѕР±РЅРѕРІР»РµРЅРёСЏ РґРёСЃРїР»РµСЏ
 }
 
 /**
-  * @brief  Функция опроса длинных нажатий кнопок.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕРїСЂРѕСЃР° РґР»РёРЅРЅС‹С… РЅР°Р¶Р°С‚РёР№ РєРЅРѕРїРѕРє.
+  * @retval РќРµС‚
   */
 void ScanButtonsLong(void)
 {
@@ -569,21 +569,21 @@ void ScanButtonsLong(void)
     {
         PowerButton_State = OPEN;
         //-----------------------------------------------------------------
-        // Зафиксировано длинное нажатие кнопки POWER
+        // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РґР»РёРЅРЅРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё POWER
         //-----------------------------------------------------------------
         HAL_GPIO_TogglePin(LED_DBG_GPIO_Port, LED_DBG_Pin);
 
-        // Если текущий режим NORMAL
+        // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
         if (System_State == NORMAL)
         {
-            // Переключиться в режим SETUP
+            // РџРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РІ СЂРµР¶РёРј SETUP
             System_State = SETUP;
             PowerLED_On();
         }
-        // Если текущий режим SETUP
+        // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
         else if (System_State == SETUP)
         {
-            // Переключиться в режим NORMAL
+            // РџРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РІ СЂРµР¶РёРј NORMAL
             System_State = NORMAL;
             PowerLED_Off();
         }
@@ -593,13 +593,13 @@ void ScanButtonsLong(void)
     {
         InputButton_State = OPEN;
         //-----------------------------------------------------------------
-        // Зафиксировано длинное нажатие кнопки INPUT
+        // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РґР»РёРЅРЅРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё INPUT
         //-----------------------------------------------------------------
         HAL_GPIO_TogglePin(LED_DBG_GPIO_Port, LED_DBG_Pin);
-        // Если текущий режим NORMAL
+        // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
         if (System_State == NORMAL)
         {
-            (Lock_State == ON) ? (Lock_State = OFF) : (Lock_State = ON); // Переключить режим блокировки
+            (Lock_State == ON) ? (Lock_State = OFF) : (Lock_State = ON); // РџРµСЂРµРєР»СЋС‡РёС‚СЊ СЂРµР¶РёРј Р±Р»РѕРєРёСЂРѕРІРєРё
         }
     }
 
@@ -607,22 +607,22 @@ void ScanButtonsLong(void)
     {
         OutputButton_State = OPEN;
         //-----------------------------------------------------------------
-        // Зафиксировано длинное нажатие кнопки OUTPUT
+        // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РґР»РёРЅРЅРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё OUTPUT
         //-----------------------------------------------------------------
         HAL_GPIO_TogglePin(LED_DBG_GPIO_Port, LED_DBG_Pin); 
-        // Если текущий режим NORMAL
+        // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
         if (System_State == NORMAL)
         {
-            (Mute_State == ON) ? (Mute_State = OFF) : (Mute_State = ON); // Переключить режим MUTE
+            (Mute_State == ON) ? (Mute_State = OFF) : (Mute_State = ON); // РџРµСЂРµРєР»СЋС‡РёС‚СЊ СЂРµР¶РёРј MUTE
         }
     }
 
-    DisplayUpdate_Task = TRUE; // Ставим флаг задачи обновления дисплея
+    DisplayUpdate_Task = TRUE; // РЎС‚Р°РІРёРј С„Р»Р°Рі Р·Р°РґР°С‡Рё РѕР±РЅРѕРІР»РµРЅРёСЏ РґРёСЃРїР»РµСЏ
 }
 
 /**
-  * @brief  Функция обновления OLED-дисплея.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕР±РЅРѕРІР»РµРЅРёСЏ OLED-РґРёСЃРїР»РµСЏ.
+  * @retval РќРµС‚
   */
 void Display_Update(void)
 {
@@ -645,12 +645,12 @@ void Display_Update(void)
 
         if (Lock_State == ON)
         {
-            disp1color_printf(16, 24, FONTID_10X16F, "%c", 0x1F); // Значок блокировки
+            disp1color_printf(16, 24, FONTID_10X16F, "%c", 0x1F); // Р—РЅР°С‡РѕРє Р±Р»РѕРєРёСЂРѕРІРєРё
         }
 
         if (Mute_State == ON)
         {
-            // Стрелка
+            // РЎС‚СЂРµР»РєР°
             disp1color_DrawLine(83, 31, 93, 31);
             disp1color_DrawLine(83, 32, 93, 32);
             disp1color_DrawLine(89, 27, 93, 31);
@@ -660,50 +660,50 @@ void Display_Update(void)
         }
     }
 
-    // Если текущий режим SETUP
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
     else if (System_State == SETUP)
     {
-        // Заголовок
+        // Р—Р°РіРѕР»РѕРІРѕРє
         #ifndef RUS_LANG
         disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "Settings");
         #else
-        disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "Настройки");
+        disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "РќР°СЃС‚СЂРѕР№РєРё");
         #endif
         disp1color_DrawRectangleFilled(0, 20, DISP1COLOR_Width - 1, 20);
 
-        // Если сейчас 1 этап настройки,
+        // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 1 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё,
         if (SetupStage_State == SETUP_PAGE1)
         {
-            // Количество установленных релейный модулей
+            // РљРѕР»РёС‡РµСЃС‚РІРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹С… СЂРµР»РµР№РЅС‹Р№ РјРѕРґСѓР»РµР№
             
             #ifndef RUS_LANG
             disp1color_printf(5, 27, FONTID_10X16F, "Relay\r\nmodules");
             #else
-            disp1color_printf(5, 27, FONTID_10X16F, "Релейных\r\nмодулей");
+            disp1color_printf(5, 27, FONTID_10X16F, "Р РµР»РµР№РЅС‹С…\r\nРјРѕРґСѓР»РµР№");
             #endif
             disp1color_printf(100, 36, FONTID_10X16F, "%d", ModulesCount_Par);
         }
 
-        // Если сейчас 2 этап настройки,
+        // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 2 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё,
         else if (SetupStage_State == SETUP_PAGE2)
         {            
-            // Количество входов и выходов
+            // РљРѕР»РёС‡РµСЃС‚РІРѕ РІС…РѕРґРѕРІ Рё РІС‹С…РѕРґРѕРІ
             #ifndef RUS_LANG
             disp1color_printf(5, 27, FONTID_10X16F, "Inputs\r\nOutputs");
             #else
-            disp1color_printf(5, 27, FONTID_10X16F, "Входов\r\nВыходов");
+            disp1color_printf(5, 27, FONTID_10X16F, "Р’С…РѕРґРѕРІ\r\nР’С‹С…РѕРґРѕРІ");
             #endif
             disp1color_printf(100, 27, FONTID_10X16F, "%d\r\n%d", InputsCount_Par, OutputsCount_Par);
         }
 
-        // Если сейчас 3 этап настройки,
+        // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 3 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё,
         else if (SetupStage_State == SETUP_PAGE3)
         {
-            // Порядок расположения входов/выходов
+            // РџРѕСЂСЏРґРѕРє СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ РІС…РѕРґРѕРІ/РІС‹С…РѕРґРѕРІ
             #ifndef RUS_LANG
             disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "I/O order");
             #else
-            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Порядок");
+            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "РџРѕСЂСЏРґРѕРє");
             #endif
             disp1color_DrawRectangle(13, 60, DISP1COLOR_Width - 15, 65);
 
@@ -716,14 +716,14 @@ void Display_Update(void)
                 disp1color_printfCenterAlign(0, 44, FONTID_10X16F, "%c%c%c ... %c%c%c", 0x1D, 0x1D, 0x1D, 0x1E, 0x1E, 0x1E);
             }
         }
-        // Если сейчас 4 этап настройки,
+        // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 4 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё,
         else if (SetupStage_State == SETUP_PAGE4)
         {
-            //  Режим отображения входов/выходов
+            //  Р РµР¶РёРј РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІС…РѕРґРѕРІ/РІС‹С…РѕРґРѕРІ
             #ifndef RUS_LANG
             disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Display");
             #else
-            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Отображение");
+            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "РћС‚РѕР±СЂР°Р¶РµРЅРёРµ");
             #endif
             disp1color_DrawRectangle(12, 44, DISP1COLOR_Width - 1 - 12, DISP1COLOR_Height - 1);
 
@@ -738,72 +738,72 @@ void Display_Update(void)
         }
     }
 
-    // Вывести буфер кадра на дисплей
+    // Р’С‹РІРµСЃС‚Рё Р±СѓС„РµСЂ РєР°РґСЂР° РЅР° РґРёСЃРїР»РµР№
     disp1color_UpdateFromBuff();
 }
 
 /**
-  * @brief  Функция формирования и отправки данных на релейный модуль.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ Рё РѕС‚РїСЂР°РІРєРё РґР°РЅРЅС‹С… РЅР° СЂРµР»РµР№РЅС‹Р№ РјРѕРґСѓР»СЊ.
+  * @retval РќРµС‚
   */
 void RelaysModule_Update(uint16_t Input, uint16_t Output, uint16_t Mute)
 {
     uint32_t Frame = 0;
     
-    // Сформировать данные для отправки
-    // Если настроен порядок "входы/выходы"
+    // РЎС„РѕСЂРјРёСЂРѕРІР°С‚СЊ РґР°РЅРЅС‹Рµ РґР»СЏ РѕС‚РїСЂР°РІРєРё
+    // Р•СЃР»Рё РЅР°СЃС‚СЂРѕРµРЅ РїРѕСЂСЏРґРѕРє "РІС…РѕРґС‹/РІС‹С…РѕРґС‹"
     if (InOutOrder_Par == IN_OUT)
     {
         Frame = ((1 << (Input + OutputsCount_Par)) | (1 << Output)) * (!Mute & 1);
-        // Переменная mute инвертируется и перемножается с маской, чтобы выделить младший бит
-        // Тем самым при активном MUTE temp станет равным нулю
+        // РџРµСЂРµРјРµРЅРЅР°СЏ mute РёРЅРІРµСЂС‚РёСЂСѓРµС‚СЃСЏ Рё РїРµСЂРµРјРЅРѕР¶Р°РµС‚СЃСЏ СЃ РјР°СЃРєРѕР№, С‡С‚РѕР±С‹ РІС‹РґРµР»РёС‚СЊ РјР»Р°РґС€РёР№ Р±РёС‚
+        // РўРµРј СЃР°РјС‹Рј РїСЂРё Р°РєС‚РёРІРЅРѕРј MUTE temp СЃС‚Р°РЅРµС‚ СЂР°РІРЅС‹Рј РЅСѓР»СЋ
     }
-    // Если настроен порядок "выходы/входы"
+    // Р•СЃР»Рё РЅР°СЃС‚СЂРѕРµРЅ РїРѕСЂСЏРґРѕРє "РІС‹С…РѕРґС‹/РІС…РѕРґС‹"
     else if (InOutOrder_Par == OUT_IN)
     {
         Frame = ((1 << (Output + InputsCount_Par)) | (1 << Input)) * (!Mute & 1);
     }
 
-    // Сбросить релейный модуль
+    // РЎР±СЂРѕСЃРёС‚СЊ СЂРµР»РµР№РЅС‹Р№ РјРѕРґСѓР»СЊ
     RelaysModule_Reset();
 
-    // Отправить новые данные по SPI
+    // РћС‚РїСЂР°РІРёС‚СЊ РЅРѕРІС‹Рµ РґР°РЅРЅС‹Рµ РїРѕ SPI
     HAL_SPI_Transmit(&hspi1, (uint8_t *)&Frame, ModulesCount_Par, 1);
-    // Сгенерировать импульс для переноса данных между регистрами TPIC6B595
+    // РЎРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РёРјРїСѓР»СЊСЃ РґР»СЏ РїРµСЂРµРЅРѕСЃР° РґР°РЅРЅС‹С… РјРµР¶РґСѓ СЂРµРіРёСЃС‚СЂР°РјРё TPIC6B595
     HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_SET);
-    // Небольшая задержка, чтобы реле успели сработать
+    // РќРµР±РѕР»СЊС€Р°СЏ Р·Р°РґРµСЂР¶РєР°, С‡С‚РѕР±С‹ СЂРµР»Рµ СѓСЃРїРµР»Рё СЃСЂР°Р±РѕС‚Р°С‚СЊ
     HAL_Delay(5);
 }
 
 /**
-  * @brief  Функция сброса релейного модуля.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ СЃР±СЂРѕСЃР° СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ.
+  * @retval РќРµС‚
   */
 inline void RelaysModule_Reset(void)
 {
     HAL_GPIO_WritePin(OLED_RES_GPIO_Port, OLED_RES_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(OLED_RES_GPIO_Port, OLED_RES_Pin, GPIO_PIN_SET);
 
-    // Сгенерировать импульс для переноса данных между регистрами TPIC6B595
+    // РЎРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РёРјРїСѓР»СЊСЃ РґР»СЏ РїРµСЂРµРЅРѕСЃР° РґР°РЅРЅС‹С… РјРµР¶РґСѓ СЂРµРіРёСЃС‚СЂР°РјРё TPIC6B595
     HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_SET);
 
-    // Небольшая задержка, чтобы реле успели выключиться
+    // РќРµР±РѕР»СЊС€Р°СЏ Р·Р°РґРµСЂР¶РєР°, С‡С‚РѕР±С‹ СЂРµР»Рµ СѓСЃРїРµР»Рё РІС‹РєР»СЋС‡РёС‚СЊСЃСЏ
     HAL_Delay(5);
 }
 
 /**
-  * @brief  Функция-обработчик внешних прерываний.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ-РѕР±СЂР°Р±РѕС‚С‡РёРє РІРЅРµС€РЅРёС… РїСЂРµСЂС‹РІР°РЅРёР№.
+  * @retval РќРµС‚
   */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {   
-    // Если не запущена обработка другой кнопки
+    // Р•СЃР»Рё РЅРµ Р·Р°РїСѓС‰РµРЅР° РѕР±СЂР°Р±РѕС‚РєР° РґСЂСѓРіРѕР№ РєРЅРѕРїРєРё
     if ((GPIO_Pin == BTN_PWR_Pin) | (GPIO_Pin == BTN_IN_Pin) | (GPIO_Pin == BTN_OUT_Pin))
     {
-        DeBouncer_Timer = DEBOUCE_TIME; // Инициализируем таймер
-        DeBouncer_Task = TRUE;          // Взводим флаг задачи подавления дребезга
+        DeBouncer_Timer = DEBOUCE_TIME; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј С‚Р°Р№РјРµСЂ
+        DeBouncer_Task = TRUE;          // Р’Р·РІРѕРґРёРј С„Р»Р°Рі Р·Р°РґР°С‡Рё РїРѕРґР°РІР»РµРЅРёСЏ РґСЂРµР±РµР·РіР°
     }
 }
 /* USER CODE END 4 */

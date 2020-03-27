@@ -57,14 +57,14 @@ void Error_Handler(void);
 
 extern uint8_t System_State;
 
-// Флаги задач
+// Р¤Р»Р°РіРё Р·Р°РґР°С‡
 extern volatile uint8_t DeBouncer_Task;
 extern volatile uint8_t CountdownLongPress_Task;
 extern volatile uint8_t ScanButtonsShort_Task;
 extern volatile uint8_t ScanButtonsLong_Task;
 extern volatile uint8_t DisplayUpdate_Task;
 
-// Таймеры задач
+// РўР°Р№РјРµСЂС‹ Р·Р°РґР°С‡
 extern volatile uint16_t DeBouncer_Timer;
 extern volatile uint16_t LongPress_Timer;
 extern volatile uint16_t DisplayUpdate_Timer;
@@ -102,13 +102,13 @@ extern volatile uint16_t DisplayUpdate_Timer;
 #define LED_PWR_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
-#define OLED_Enable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_RESET) // Макрос активации дисплея
-#define OLED_Disable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_SET) // Макрос деактивации дисплея
-#define OLED_DataEnable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_SET) // Макрос апереключения дисплея в режим данных
-#define OLED_CommandEnable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_RESET) // Макрос переключения дисплея в режим команд
+#define OLED_Enable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_RESET) // РњР°РєСЂРѕСЃ Р°РєС‚РёРІР°С†РёРё РґРёСЃРїР»РµСЏ
+#define OLED_Disable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_SET) // РњР°РєСЂРѕСЃ РґРµР°РєС‚РёРІР°С†РёРё РґРёСЃРїР»РµСЏ
+#define OLED_DataEnable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_SET) // РњР°РєСЂРѕСЃ Р°РїРµСЂРµРєР»СЋС‡РµРЅРёСЏ РґРёСЃРїР»РµСЏ РІ СЂРµР¶РёРј РґР°РЅРЅС‹С…
+#define OLED_CommandEnable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_RESET) // РњР°РєСЂРѕСЃ РїРµСЂРµРєР»СЋС‡РµРЅРёСЏ РґРёСЃРїР»РµСЏ РІ СЂРµР¶РёРј РєРѕРјР°РЅРґ
 
-#define RelaysModule_Enable() HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_RESET) // Макрос активации релейного модуля
-#define RelaysModule_Disable() HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_SET) // Макрос деактивации сдвигового регистра
+#define RelaysModule_Enable() HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_RESET) // РњР°РєСЂРѕСЃ Р°РєС‚РёРІР°С†РёРё СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ
+#define RelaysModule_Disable() HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_SET) // РњР°РєСЂРѕСЃ РґРµР°РєС‚РёРІР°С†РёРё СЃРґРІРёРіРѕРІРѕРіРѕ СЂРµРіРёСЃС‚СЂР°
 
 #define FALSE 0
 #define TRUE 1
@@ -132,14 +132,14 @@ extern volatile uint16_t DisplayUpdate_Timer;
 #define BLACK 0 // Black color, no pixel
 #define WHITE 1 // Pixel is set. Color depends on OLED
 
-#define IN_OUT 0 // Входы/выходы
-#define OUT_IN 1 // Выходы/входы
+#define IN_OUT 0 // Р’С…РѕРґС‹/РІС‹С…РѕРґС‹
+#define OUT_IN 1 // Р’С‹С…РѕРґС‹/РІС…РѕРґС‹
 
-#define NUMBERS 0 // Отображение цифрами
-#define NAMES 1 // Отображение именами
+#define NUMBERS 0 // РћС‚РѕР±СЂР°Р¶РµРЅРёРµ С†РёС„СЂР°РјРё
+#define NAMES 1 // РћС‚РѕР±СЂР°Р¶РµРЅРёРµ РёРјРµРЅР°РјРё
 
-#define MAX_MODULES 4 // Максимально поддерживаемое количество релейных модулей
-#define RELAY_CNT 8   // Количество реле в одном релейном модуле
+#define MAX_MODULES 4 // РњР°РєСЃРёРјР°Р»СЊРЅРѕ РїРѕРґРґРµСЂР¶РёРІР°РµРјРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР»РµР№РЅС‹С… РјРѕРґСѓР»РµР№
+#define RELAY_CNT 8   // РљРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР»Рµ РІ РѕРґРЅРѕРј СЂРµР»РµР№РЅРѕРј РјРѕРґСѓР»Рµ
 
 #define DEBOUCE_TIME 50U
 #define LONGPRESS_TIME 800U
