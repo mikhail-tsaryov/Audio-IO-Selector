@@ -90,14 +90,14 @@ void disp1color_UpdateFromBuff(void)
 //==============================================================================
 int16_t disp1color_printf(uint8_t X, uint8_t Y, uint8_t FontID, const char *args, ...)
 {
-  char StrBuff[100];
-  
-  va_list ap;
-  va_start(ap, args);
-  char len = vsnprintf(StrBuff, sizeof(StrBuff), args, ap);
-  va_end(ap);
-  
-  return disp1color_DrawString(X, Y, FontID, (uint8_t *)StrBuff);
+    char StrBuff[100];
+
+    va_list ap;
+    va_start(ap, args);
+    vsnprintf(StrBuff, sizeof(StrBuff), args, ap);
+    va_end(ap);
+
+    return disp1color_DrawString(X, Y, FontID, (uint8_t *)StrBuff);
 }
 //==============================================================================
 
@@ -107,12 +107,12 @@ int16_t disp1color_printf(uint8_t X, uint8_t Y, uint8_t FontID, const char *args
 int16_t disp1color_printfCenterAlign(uint8_t offset_X, uint8_t Y, uint8_t FontID, const char *args, ...)
 {
     char StrBuff[100];
-    
+
     va_list ap;
     va_start(ap, args);
-    char len = vsnprintf(StrBuff, sizeof(StrBuff), args, ap);
+    vsnprintf(StrBuff, sizeof(StrBuff), args, ap);
     va_end(ap);
-    uint8_t X = (DISP1COLOR_Width - dispcolor_getStrWidth(FontID, &StrBuff)) / 2 + offset_X;
+    uint8_t X = (DISP1COLOR_Width - dispcolor_getStrWidth(FontID, StrBuff)) / 2 + offset_X;
     return disp1color_DrawString(X, Y, FontID, (uint8_t *)StrBuff);
 }
 //==============================================================================
