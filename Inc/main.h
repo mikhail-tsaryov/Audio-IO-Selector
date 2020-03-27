@@ -122,6 +122,8 @@ extern void Display_Update(void);
 #define UART_DBG_TX_GPIO_Port GPIOA
 #define UART_DBG_RX_Pin GPIO_PIN_10
 #define UART_DBG_RX_GPIO_Port GPIOA
+#define FLASH_nWP_Pin GPIO_PIN_6
+#define FLASH_nWP_GPIO_Port GPIOB
 #define LED_PWR_Pin GPIO_PIN_7
 #define LED_PWR_GPIO_Port GPIOB
 #define LED_DBG_Pin GPIO_PIN_8
@@ -172,7 +174,7 @@ extern void Display_Update(void);
 #define DEBOUCE_TIME 50U
 #define LONGPRESS_TIME 800U
 #define DISPLAYUPDATE_TIME 30U
-#define WELCOME_TIME 3U
+#define WELCOME_TIME 3000U
 
 /* USER CODE END Private defines */
 

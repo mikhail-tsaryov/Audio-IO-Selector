@@ -32,6 +32,7 @@
 #include <string.h>
 #include "usbd_cdc_if.h"
 #include "buttons.h"
+#include "ext_flash.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -134,23 +135,39 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-    // OLED Init
-    disp1color_Init();
-    disp1color_SetBrightness(255);
-    disp1color_Sleep();
-    
-    // Enable Power LED
-    PowerLED_On();
+    HAL_Delay(100);
+  ExternalFlash_Init();
 
-    // Передать по USB
-    // char str_tx[31];
-    // sprintf(str_tx, "Input %d\r\n", ActiveInput);
-    // CDC_Transmit_FS((unsigned char *)str_tx, strlen(str_tx));
 
-    /* USER CODE END 2 */
+  // Тестирование Flash
+  uint8_t str1[] = "Flash ID:\r\n";
+  HAL_UART_Transmit(&huart1, str1, sizeof(str1) - 1, 0xFFFF);
+  ExternalFlash_ReadID();
+  uint8_t str2[] = "\r\n";
+  HAL_UART_Transmit(&huart1, str2, sizeof(str2) - 1, 0xFFFF);
+  HAL_Delay(10000);
 
-    /* Infinite loop */
-    /* USER CODE BEGIN WHILE */
+
+
+
+
+  // OLED Init
+  disp1color_Init();
+  disp1color_SetBrightness(255);
+  disp1color_Sleep();
+
+  // Enable Power LED
+  PowerLED_On();
+
+  // Передать по USB
+  // char str_tx[31];
+  // sprintf(str_tx, "Input %d\r\n", ActiveInput);
+  // CDC_Transmit_FS((unsigned char *)str_tx, strlen(str_tx));
+
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
     while (1)
     {
         // Если есть задача сканировать короткие нажатия кнопок
@@ -180,9 +197,9 @@ int main(void)
             DisplayUpdate_Task = FALSE;
             Display_Update();
         }
-        /* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-        /* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
 }
