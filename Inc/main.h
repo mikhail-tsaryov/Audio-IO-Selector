@@ -47,27 +47,53 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+#define DEBUG
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
-extern uint8_t System_State;
-
+// Параметры
+extern uint8_t ModulesCount_Par;        // Количество релейных модулей
+extern uint8_t InputsCount_Par;         // Количество входов в модуле
+extern uint8_t OutputsCount_Par;        // Количество выходов в модуле
+extern uint8_t InOutOrder_Par;     // Параметр, отвечающий за порядок расположения на разъемах - входы/выходы или выходы/входы
+extern uint8_t IODisplayMode_Par; // Параметр отображения входов/выходов (цифрами или именами)
 // Флаги задач
-extern volatile uint8_t DeBouncer_Task;
 extern volatile uint8_t CountdownLongPress_Task;
+extern volatile uint8_t DeBouncer_Task;
 extern volatile uint8_t ScanButtonsShort_Task;
 extern volatile uint8_t ScanButtonsLong_Task;
+extern volatile uint8_t RelaysUpdate_Task;
+extern volatile uint8_t RelaysModuleUpdate_Task;
 extern volatile uint8_t DisplayUpdate_Task;
-
-// Таймеры задач
+// Дополнительные флаги
+extern volatile uint8_t AllowSaveMute_Flag; // Флаг разрешения сохранения состояния MUTE
+extern volatile uint8_t AllowInputChange_Flag; // Флаг разрешения изменения количества модулей (введена, чтобы не допустить изменение параметра при входе в режим настройки)
+// Таймеры
 extern volatile uint16_t DeBouncer_Timer;
 extern volatile uint16_t LongPress_Timer;
 extern volatile uint16_t DisplayUpdate_Timer;
+// Переменные состояния
+extern uint8_t System_State; // Текущий режим работы устройства
+extern uint8_t SetupStage_State;   // Текущий этап режима настройки
+extern uint8_t Mute_State;     // Переменная состояния режима MUTE
+extern uint8_t Lock_State;     // переменная состояния блокировки изменения входов и выходов
+extern uint8_t ActiveInput;        // Текущий вход
+extern uint8_t ActiveOutput;       // Текущий выход
+// Состояния кнопок
+extern uint8_t PowerButton_State; // Переменная состояния кнопки POWER
+extern uint8_t InputButton_State; // Переменная состояния кнопки INPUT
+extern uint8_t OutputButton_State; // Переменная состояния кнопки OUTPUT
+extern uint8_t LockButton_State;   // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
+extern uint8_t MuteButton_State;   // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
+
+extern void PowerLED_On(void);
+extern void PowerLED_Off(void);
+extern void RelaysModule_Update(uint16_t, uint16_t, uint16_t);
+extern void RelaysModule_Reset(void);
+extern void Display_Update(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
