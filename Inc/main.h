@@ -79,27 +79,29 @@ extern volatile uint16_t DisplayUpdate_Timer;
 #define OLED_RES_GPIO_Port GPIOA
 #define OLED_DC_Pin GPIO_PIN_3
 #define OLED_DC_GPIO_Port GPIOA
-#define SPI_SCK_Pin GPIO_PIN_5
-#define SPI_SCK_GPIO_Port GPIOA
-#define SPI_DATA_Pin GPIO_PIN_7
-#define SPI_DATA_GPIO_Port GPIOA
+#define SPI_MISO_Pin GPIO_PIN_6
+#define SPI_MISO_GPIO_Port GPIOA
+#define SPI_MOSI_Pin GPIO_PIN_7
+#define SPI_MOSI_GPIO_Port GPIOA
 #define BTN_IN_Pin GPIO_PIN_10
 #define BTN_IN_GPIO_Port GPIOB
 #define BTN_IN_EXTI_IRQn EXTI15_10_IRQn
 #define BTN_OUT_Pin GPIO_PIN_11
 #define BTN_OUT_GPIO_Port GPIOB
 #define BTN_OUT_EXTI_IRQn EXTI15_10_IRQn
-#define BTN_PWR_Pin GPIO_PIN_8
-#define BTN_PWR_GPIO_Port GPIOA
-#define BTN_PWR_EXTI_IRQn EXTI9_5_IRQn
+#define BTN_PWR_Pin GPIO_PIN_14
+#define BTN_PWR_GPIO_Port GPIOB
+#define BTN_PWR_EXTI_IRQn EXTI15_10_IRQn
 #define UART_DBG_TX_Pin GPIO_PIN_9
 #define UART_DBG_TX_GPIO_Port GPIOA
 #define UART_DBG_RX_Pin GPIO_PIN_10
 #define UART_DBG_RX_GPIO_Port GPIOA
+#define LED_PWR_Pin GPIO_PIN_7
+#define LED_PWR_GPIO_Port GPIOB
 #define LED_DBG_Pin GPIO_PIN_8
 #define LED_DBG_GPIO_Port GPIOB
-#define LED_PWR_Pin GPIO_PIN_9
-#define LED_PWR_GPIO_Port GPIOB
+#define SPI_nCS_FLASH_Pin GPIO_PIN_9
+#define SPI_nCS_FLASH_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 #define OLED_Enable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_RESET) // Макрос активации дисплея
@@ -144,7 +146,7 @@ extern volatile uint16_t DisplayUpdate_Timer;
 #define DEBOUCE_TIME 50U
 #define LONGPRESS_TIME 800U
 #define DISPLAYUPDATE_TIME 30U
-#define WELCOME_TIME 3000U
+#define WELCOME_TIME 3U
 
 /* USER CODE END Private defines */
 

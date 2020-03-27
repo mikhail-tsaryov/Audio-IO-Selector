@@ -86,6 +86,7 @@ uint8_t InputButton_State = OPEN; // Переменная состояния к�
 uint8_t OutputButton_State = OPEN; // Переменная состояния кнопки OUTPUT
 uint8_t LockButton_State = OPEN; // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
 uint8_t MuteButton_State = OPEN; // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -112,7 +113,7 @@ void Display_Update(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -133,9 +134,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
   MX_USART1_UART_Init();
   MX_USB_DEVICE_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
     // OLED Init
@@ -143,6 +144,7 @@ int main(void)
     disp1color_SetBrightness(255);
     disp1color_Sleep();
     
+    // Enable Power LED
     PowerLED_On();
 
   /* USER CODE END 2 */
@@ -258,7 +260,7 @@ void ScanButtonsShort(void)
     // Проверить нажатие кнопки POWER
     if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // �?нициализируем таймер долгого нажатия
         CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
         (PowerButton_State == OPEN) ? (PowerButton_State = CLOSE) : (PowerButton_State = OPEN);
     }
@@ -271,6 +273,11 @@ void ScanButtonsShort(void)
             //-----------------------------------------------------------------
             // Зафиксировано короткое нажатие кнопки POWER
             //-----------------------------------------------------------------
+
+            // Sending debug data on the UART
+            uint8_t str[20] = "Press Power Button\r\n";
+            HAL_UART_Transmit(&huart1, str, 20, 0xFFFF);
+
             if (System_State == STANDBY)
             {
                 PowerLED_Off();        // Отключить светодиод питания
@@ -282,11 +289,11 @@ void ScanButtonsShort(void)
                 #ifndef RUS_LANG
                 disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
                 disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
-                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "© M.Tsaryov, %d.3", 2020);
+                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c M.Tsaryov, %d.3", 0xA9, 2020);
                 #else
                 disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
                 disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
-                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "© М.Царёв, %d.3", 2020);
+                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
                 #endif
                 disp1color_UpdateFromBuff();
                 HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
@@ -337,7 +344,7 @@ void ScanButtonsShort(void)
     // Проверить нажатие кнопки INPUT
     if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // �?нициализируем таймер долгого нажатия
         CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
         (InputButton_State == OPEN) ? (InputButton_State = CLOSE) : (InputButton_State = OPEN);
     }
@@ -350,6 +357,9 @@ void ScanButtonsShort(void)
             //-----------------------------------------------------------------
             // Зафиксировано короткое нажатие кнопки INPUT
             //-----------------------------------------------------------------
+            
+            
+
             // Если текущий режим NORMAL
             if (System_State == NORMAL)
             {
@@ -448,7 +458,7 @@ void ScanButtonsShort(void)
     // Проверить нажатие кнопки OUTPUT
     if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // �?нициализируем таймер долгого нажатия
         CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
         (OutputButton_State == OPEN) ? (OutputButton_State = CLOSE) : (OutputButton_State = OPEN);
     }
@@ -802,7 +812,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     // Если не запущена обработка другой кнопки
     if ((GPIO_Pin == BTN_PWR_Pin) | (GPIO_Pin == BTN_IN_Pin) | (GPIO_Pin == BTN_OUT_Pin))
     {
-        DeBouncer_Timer = DEBOUCE_TIME; // Инициализируем таймер
+        DeBouncer_Timer = DEBOUCE_TIME; // �?нициализируем таймер
         DeBouncer_Task = TRUE;          // Взводим флаг задачи подавления дребезга
     }
 }

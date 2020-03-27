@@ -57,6 +57,7 @@
 
 /* External variables --------------------------------------------------------*/
 extern PCD_HandleTypeDef hpcd_USB_FS;
+extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -205,7 +206,7 @@ void SysTick_Handler(void)
       if (LongPress_Timer == 0)                 // Если досчитали до конца,
       {
           CountdownLongPress_Task = FALSE;      // снимаем задачу,
-          LongPress_Timer = LONGPRESS_TIME;     // Инициализируем таймер долгого нажатия
+          LongPress_Timer = LONGPRESS_TIME;     // �?нициализируем таймер долгого нажатия
           ScanButtonsLong_Task = TRUE;          // и ставим флаг задачи сканирования кнопок
       }
   }
@@ -235,17 +236,17 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles EXTI line[9:5] interrupts.
+  * @brief This function handles USART1 global interrupt.
   */
-void EXTI9_5_IRQHandler(void)
+void USART1_IRQHandler(void)
 {
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-  
-  /* USER CODE END EXTI9_5_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_8);
-  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+  /* USER CODE BEGIN USART1_IRQn 0 */
 
-  /* USER CODE END EXTI9_5_IRQn 1 */
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /**
@@ -258,6 +259,7 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
   /* USER CODE END EXTI15_10_IRQn 1 */
