@@ -14,10 +14,6 @@ void ShortPressPowerButton_Handler(void)
         AllowSaveMute_Flag = TRUE;
         RelaysModuleUpdate_Task = TRUE;
 
-        HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
-        HAL_Delay(WELCOME_TIME);
-        HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-
         disp1color_Wake();
         // Приветствие
         disp1color_FillScreenbuff(0);
@@ -33,6 +29,10 @@ void ShortPressPowerButton_Handler(void)
         disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
         #endif
         disp1color_UpdateFromBuff();
+        
+        HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+        HAL_Delay(WELCOME_TIME);
+        HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
         PowerLED_Off(); // Отключить светодиод питания
     }
@@ -51,7 +51,7 @@ void ShortPressPowerButton_Handler(void)
     // Если текущий режим SETUP
     else if (System_State == SETUP)
     {
-        // Если сейчас 1 этап настройка, переключиться на 2 этап
+        // Если сейчас 1 этап настройки, переключиться на 2 этап
         if (SetupStage_State == SETUP_PAGE1)
         {
             SetupStage_State = SETUP_PAGE2;
@@ -92,11 +92,7 @@ void ShortPressInputButton_Handler(void)
     {
         if (SetupStage_State == SETUP_PAGE1)
         {
-            if (AllowInputChange_Flag == FALSE)
-            {
-                AllowInputChange_Flag = TRUE;
-            }
-            else if (ModulesCount_Par < MAX_MODULES)
+            if (ModulesCount_Par < MAX_MODULES)
             {
                 ModulesCount_Par++;
             }
@@ -188,11 +184,7 @@ void ShortPressOutputButton_Handler(void)
     {
         if (SetupStage_State == SETUP_PAGE1)
         {
-            if (AllowInputChange_Flag == FALSE)
-            {
-                AllowInputChange_Flag = TRUE;
-            }
-            else if (ModulesCount_Par > 1)
+            if (ModulesCount_Par > 1)
             {
                 ModulesCount_Par--;
             }
@@ -281,7 +273,6 @@ void LongPressPowerButton_Handler(void)
 
         System_State = NORMAL;
         SetupStage_State = SETUP_PAGE1;
-        AllowInputChange_Flag = FALSE;
         AllowSaveMute_Flag = TRUE;
         PowerLED_Off();
     }

@@ -128,7 +128,7 @@ void SSD1306_SetMemAdressingMode(uint8_t Mode)
 {
   if (Mode > 2)
     return;
-
+    
   SendCommand(CMD_SetMemAdressingMode, (uint8_t *)Mode, 1);
 }
 //==============================================================================

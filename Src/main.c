@@ -70,7 +70,6 @@ volatile uint8_t RelaysModuleUpdate_Task = FALSE;
 volatile uint8_t DisplayUpdate_Task = FALSE;
 // Дополнительные флаги
 volatile uint8_t AllowSaveMute_Flag = FALSE; // Флаг разрешения сохранения состояния MUTE
-volatile uint8_t AllowInputChange_Flag = FALSE; // Флаг разрешения изменения количества модулей (введена, чтобы не допустить изменение параметра при входе в режим настройки)
 // Таймеры
 volatile uint16_t DeBouncer_Timer = DEBOUCE_TIME;
 volatile uint16_t LongPress_Timer = LONGPRESS_TIME;
@@ -89,8 +88,8 @@ uint8_t OutputButton_State = OPEN; // Переменная состояния к
 uint8_t LockButton_State = OPEN; // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
 uint8_t MuteButton_State = OPEN; // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
 
-uint32_t SaveStartAddr = 0x00C000; // Начальный адрес сохранения настроек
-
+uint32_t SaveStartAddr = 0x000000; // Начальный адрес сохранения настроек
+uint8_t FlashPageBuffer[256] = {0}; // Буфер чтения Flash
 // Дополнительно
 char UART_BufSrting[32];
 
@@ -141,6 +140,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   ExternalFlash_Init();
+  uint32_t TempBuf = ExternalFlash_ReadIdentification();
+  uint8_t ManufacturerID = TempBuf >> 16;
+  uint16_t DeviceID = TempBuf;
   sprintf(UART_BufSrting, "----------------------------\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
   sprintf(UART_BufSrting, "     Audio I/O Selector    \r\n");
@@ -149,34 +151,17 @@ int main(void)
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
   sprintf(UART_BufSrting, "(c) M.Tsaryov, 2020.3 \r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  uint32_t TempBuf = ExternalFlash_ReadIdentification();
-  uint8_t ManufacturerID = TempBuf >> 16;
-  uint16_t DeviceID = TempBuf;
   sprintf(UART_BufSrting, "Manufacturer ID: 0x%X\r\n", ManufacturerID);
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
   sprintf(UART_BufSrting, "Device ID: 0x%X\r\n", DeviceID);
+  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+  sprintf(UART_BufSrting, "Status Register: 0x%X\r\n", ExternalFlash_ReadStatusRegister());
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
   sprintf(UART_BufSrting, "----------------------------\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
 
 //   while (ExternalFlash_ReadStatusRegister() & BUSY);
 //   ExternalFlash_WriteByte(&ActiveInput, &SaveStartAddr);
-/*
-    for (uint8_t i = 0; i < 6; i++)
-    {
-        sprintf(UART_BufSrting, "< %X\r\n", ExternalFlash_Read(&SaveStartAddr + i));
-        HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    }
-
-    for (uint8_t i = 0; i < 6; i++)
-    {
-        while (ExternalFlash_ReadStatusRegister() & BUSY);
-        ExternalFlash_WriteByte(&i, &SaveStartAddr + i);
-        while (ExternalFlash_ReadStatusRegister() & BUSY);
-        sprintf(UART_BufSrting, "> %X\r\n", ExternalFlash_Read(&SaveStartAddr + i));
-        HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    }
-   */
 
   // OLED Init
   disp1color_Init();
@@ -469,62 +454,38 @@ inline void RelaysModule_Reset(void)
   */
 void SaveSettingsToFlash(uint32_t *pBaseAddr)
 {
-    ExternalFlash_WriteStatusRegister(0x00); // Разрешить запись во Flash
-    while (ExternalFlash_ReadStatusRegister() & BUSY);   
+    FlashPageBuffer[0] = ActiveInput;
+    FlashPageBuffer[1] = ActiveOutput;
+    FlashPageBuffer[2] = Lock_State;
+    FlashPageBuffer[3] = (Mute_State & AllowSaveMute_Flag);
+    FlashPageBuffer[4] = ModulesCount_Par;
+    FlashPageBuffer[5] = InputsCount_Par;
+    FlashPageBuffer[6] = InOutOrder_Par;
 
     while (ExternalFlash_ReadStatusRegister() & BUSY);
-    ExternalFlash_WriteByte(&ActiveInput, pBaseAddr);
+    ExternalFlash_WriteBlock(pBaseAddr);
     while (ExternalFlash_ReadStatusRegister() & BUSY);
+
+    ExternalFlash_ReadPage(pBaseAddr);
+
     sprintf(UART_BufSrting, "------ Saved settings ------\r\n");
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    
-    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", ExternalFlash_Read(pBaseAddr));
+    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", FlashPageBuffer[0] + 1);
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    ExternalFlash_WriteByte(&ActiveOutput, pBaseAddr + 1);
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", ExternalFlash_Read(pBaseAddr + 1));
+    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", FlashPageBuffer[1] + 1);
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    ExternalFlash_WriteByte(&Lock_State, pBaseAddr + 2);
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", ExternalFlash_Read(pBaseAddr + 2));
+    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", FlashPageBuffer[2]);
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
-    if (AllowSaveMute_Flag == TRUE)
-    {
-        while (ExternalFlash_ReadStatusRegister() & BUSY);
-        ExternalFlash_WriteByte(&Mute_State, pBaseAddr + 3);
-        while (ExternalFlash_ReadStatusRegister() & BUSY);
-        sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", ExternalFlash_Read(pBaseAddr + 3));
-        HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    }
-
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    ExternalFlash_WriteByte(&ModulesCount_Par, pBaseAddr + 4);
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", ExternalFlash_Read(pBaseAddr + 4));
+    sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", FlashPageBuffer[3]);
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    ExternalFlash_WriteByte(&InputsCount_Par, pBaseAddr + 5);
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", ExternalFlash_Read(pBaseAddr + 5));
+    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", FlashPageBuffer[4]);
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    ExternalFlash_WriteByte(&InOutOrder_Par, pBaseAddr + 6);
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", ExternalFlash_Read(pBaseAddr + 6));
+    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", FlashPageBuffer[5]);
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
+    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", FlashPageBuffer[6]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
     sprintf(UART_BufSrting, "----------------------------\r\n");
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
-    ExternalFlash_WriteStatusRegister(0x0C); // Запретить запись во Flash
-    while (ExternalFlash_ReadStatusRegister() & BUSY);   
 }
 
 /**
@@ -533,36 +494,15 @@ void SaveSettingsToFlash(uint32_t *pBaseAddr)
   */
 void LoadSettingsFromFlash(uint32_t *pBaseAddr)
 {
-    // ExternalFlash_WriteStatusRegister(0x00); // Разрешить запись во Flash
-    // while (ExternalFlash_ReadStatusRegister() & BUSY);
-
-    uint8_t TempActiveInput = ExternalFlash_Read(pBaseAddr);
-    uint8_t TempActiveOutput = ExternalFlash_Read(pBaseAddr + 1);
-    uint8_t TempLock_State = ExternalFlash_Read(pBaseAddr + 2);
-    uint8_t TempMute_State = ExternalFlash_Read(pBaseAddr + 3);
-    uint8_t TempModulesCount_Par = ExternalFlash_Read(pBaseAddr + 4);
-    uint8_t TempInputsCount_Par = ExternalFlash_Read(pBaseAddr + 5);
-    uint8_t TempInOutOrder_Par = ExternalFlash_Read(pBaseAddr + 6);
-    // Вывод в консоль
-    sprintf(UART_BufSrting, "------ Loaded settings -----\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", TempActiveInput);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", TempActiveOutput);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", TempLock_State);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", TempMute_State);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", TempModulesCount_Par);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", TempInputsCount_Par);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", TempInOutOrder_Par);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "----------------------------\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-
+    ExternalFlash_ReadPage(pBaseAddr);
+    uint8_t TempActiveInput = FlashPageBuffer[0];
+    uint8_t TempActiveOutput = FlashPageBuffer[1];
+    uint8_t TempLock_State = FlashPageBuffer[2];
+    uint8_t TempMute_State = FlashPageBuffer[3];
+    uint8_t TempModulesCount_Par = FlashPageBuffer[4];
+    uint8_t TempInputsCount_Par = FlashPageBuffer[5];
+    uint8_t TempInOutOrder_Par = FlashPageBuffer[6];
+    
     if ((TempModulesCount_Par > 0) & (TempModulesCount_Par <= MAX_MODULES))
     {
         ModulesCount_Par = TempModulesCount_Par;
@@ -598,6 +538,26 @@ void LoadSettingsFromFlash(uint32_t *pBaseAddr)
     {
         Mute_State = TempMute_State;
     }
+
+    // Вывод в консоль
+    sprintf(UART_BufSrting, "------ Loaded settings -----\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", TempActiveInput + 1);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", TempActiveOutput + 1);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", TempLock_State);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", TempMute_State);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", TempModulesCount_Par);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", TempInputsCount_Par);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", TempInOutOrder_Par);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "----------------------------\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
 }
 
 /**
@@ -609,7 +569,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     // Если не запущена обработка другой кнопки
     if ((GPIO_Pin == BTN_PWR_Pin) | (GPIO_Pin == BTN_IN_Pin) | (GPIO_Pin == BTN_OUT_Pin))
     {
-        DeBouncer_Timer = DEBOUCE_TIME; // �?нициализируем таймер
+        DeBouncer_Timer = DEBOUCE_TIME; // Инициализируем таймер
         DeBouncer_Task = TRUE;          // Взводим флаг задачи подавления дребезга
     }
 }

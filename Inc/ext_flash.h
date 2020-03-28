@@ -14,7 +14,8 @@
 #define WRSR 0x01              // SPI Flash opcode: Write Status Register
 #define WREN 0x06              // SPI Flash opcode: Write Enable
 #define WRDI 0x04              // SPI Flash opcode: Write Disable / End AAI mode
-#define RDID 0x9F              // SPI Flash opcode: Read ID
+#define RDID 0x9F              // SPI Flash opcode: Read Identification
+#define RDPD 0xAB              //Release from Deep Power-down, and read Device ID
 
 #define BUSY 0x01 // Mask for Status Register BUSY (Internal Write Operaiton in Progress status) bit
 #define WEL 0x02  // Mask for Status Register WEL (Write Enable status) bit
@@ -26,14 +27,14 @@
 #define AAI 0x40 // Mask for Status Register AAI (Auto Address Increment Programming status) bit
 #define BPL 0x80 // Mask for Status Register BPL (BPx block protect bit read-only protect) bit
 
-extern char UART_BufSrting[32];
+              extern char UART_BufSrting[32];
 
 void ExternalFlash_Init(void);
 uint32_t ExternalFlash_ReadIdentification(void);
 uint8_t ExternalFlash_ReadManufacturerID(void);
 uint8_t ExternalFlash_ReadStatusRegister(void);
-uint8_t ExternalFlash_Read(uint32_t *pAddr);
-void ExternalFlash_WriteByte(uint8_t *pData, uint32_t *pAddr);
+void ExternalFlash_ReadPage(uint32_t *pAddr);
+void ExternalFlash_WriteBlock(uint32_t *pAddr);
 void ExternalFlash_EraseSector(uint32_t *pAddr);
 void ExternalFlash_WriteStatusRegister(uint8_t Value);
 

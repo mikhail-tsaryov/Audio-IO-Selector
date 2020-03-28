@@ -70,7 +70,6 @@ extern volatile uint8_t RelaysModuleUpdate_Task;
 extern volatile uint8_t DisplayUpdate_Task;
 // Дополнительные флаги
 extern volatile uint8_t AllowSaveMute_Flag; // Флаг разрешения сохранения состояния MUTE
-extern volatile uint8_t AllowInputChange_Flag; // Флаг разрешения изменения количества модулей (введена, чтобы не допустить изменение параметра при входе в режим настройки)
 // Таймеры
 extern volatile uint16_t DeBouncer_Timer;
 extern volatile uint16_t LongPress_Timer;
@@ -88,6 +87,9 @@ extern uint8_t InputButton_State; // Переменная состояния к�
 extern uint8_t OutputButton_State; // Переменная состояния кнопки OUTPUT
 extern uint8_t LockButton_State;   // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
 extern uint8_t MuteButton_State;   // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
+
+extern uint32_t SaveStartAddr; // Начальный адрес сохранения настроек
+extern uint8_t FlashPageBuffer[256];
 
 extern void PowerLED_On(void);
 extern void PowerLED_Off(void);
