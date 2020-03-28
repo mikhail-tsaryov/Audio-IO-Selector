@@ -7,6 +7,8 @@
 #include "disp1color.h"
 #include "usart.h"
 
+extern uint32_t SaveStartAddr;
+
 void ShortPressPowerButton_Handler(void);
 void ShortPressInputButton_Handler(void);
 void ShortPressOutputButton_Handler(void);

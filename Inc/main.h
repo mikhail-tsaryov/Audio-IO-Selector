@@ -94,6 +94,8 @@ extern void PowerLED_Off(void);
 extern void RelaysModule_Update(uint16_t, uint16_t, uint16_t);
 extern void RelaysModule_Reset(void);
 extern void Display_Update(void);
+extern void SaveSettingsToFlash(uint32_t *);
+extern void LoadSettingsFromFlash(uint32_t *);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

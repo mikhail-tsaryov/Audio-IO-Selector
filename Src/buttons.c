@@ -9,29 +9,32 @@ void ShortPressPowerButton_Handler(void)
     // Если текущий режим STANDBY, переключиться в режим NORMAL
     if (System_State == STANDBY)
     {
-        PowerLED_Off(); // Отключить светодиод питания
+        System_State = NORMAL; // Сменить режим работы
+        LoadSettingsFromFlash(&SaveStartAddr);
+        AllowSaveMute_Flag = TRUE;
+        RelaysModuleUpdate_Task = TRUE;
+
+        HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+        HAL_Delay(WELCOME_TIME);
+        HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
         disp1color_Wake();
         // Приветствие
         disp1color_FillScreenbuff(0);
         //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
 
-#ifndef RUS_LANG
+        #ifndef RUS_LANG
         disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
         disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
         disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c M.Tsaryov, %d.3", 0xA9, 2020);
-#else
+        #else
         disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
         disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
         disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
-#endif
+        #endif
         disp1color_UpdateFromBuff();
-        HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
-        HAL_Delay(WELCOME_TIME);
-        HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
-        System_State = NORMAL; // Сменить режим работы
-        AllowSaveMute_Flag = TRUE;
-        RelaysModuleUpdate_Task = TRUE;
+        PowerLED_Off(); // Отключить светодиод питания
     }
     // Если текущий режим NORMAL, переключиться в дежурный режим
     else if (System_State == NORMAL)
@@ -61,10 +64,7 @@ void ShortPressPowerButton_Handler(void)
         // Если сейчас 3 этап настройки, переключиться на NORMAL
         else if (SetupStage_State == SETUP_PAGE3)
         {
-            System_State = NORMAL;
             SetupStage_State = SETUP_PAGE1;
-            AllowInputChange_Flag = FALSE;
-            AllowSaveMute_Flag = TRUE;
         }
     }
 }
@@ -278,7 +278,11 @@ void LongPressPowerButton_Handler(void)
     else if (System_State == SETUP)
     {
         // Переключиться в режим NORMAL
+
         System_State = NORMAL;
+        SetupStage_State = SETUP_PAGE1;
+        AllowInputChange_Flag = FALSE;
+        AllowSaveMute_Flag = TRUE;
         PowerLED_Off();
     }
 }
@@ -327,15 +331,13 @@ void ShortButtonPresses_Pooling(void)
         if (PowerButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки POWER
+            uint8_t str[] = "* Short press Power Button *\r\n";
+            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             PowerButton_State = OPEN;
             ShortPressPowerButton_Handler();
-
-#ifdef DEBUG
-            // Sending debug data on the UART
-            uint8_t str[] = "Short press Power Button\r\n";
-            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
-#endif
+            SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
         }
     }
 
@@ -351,15 +353,13 @@ void ShortButtonPresses_Pooling(void)
         if (InputButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки INPUT
+            uint8_t str[] = "* Short press Input Button *\r\n";
+            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             InputButton_State = OPEN;
             ShortPressInputButton_Handler();
-
-#ifdef DEBUG
-            // Sending debug data on the UART
-            uint8_t str[] = "Short press Input Button\r\n";
-            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
-#endif
+            SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
         }
     }
 
@@ -375,15 +375,13 @@ void ShortButtonPresses_Pooling(void)
         if (OutputButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки OUTPUT
+            uint8_t str[] = "* Short press Output Button *\r\n";
+            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             OutputButton_State = OPEN;
             ShortPressOutputButton_Handler();
-
-#ifdef DEBUG
-            // Sending debug data on the UART
-            uint8_t str[] = "Short press Output Button\r\n";
-            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
-#endif
+            SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
         }
     }
 
@@ -399,40 +397,34 @@ void LongButtonPresses_Pooling(void)
     if ((PowerButton_State == CLOSE))
     {
         // Зафиксировано длинное нажатие кнопки POWER
+        uint8_t str[] = "* Long press Power Button *\r\n";
+        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+
         PowerButton_State = OPEN;
         LongPressPowerButton_Handler();
-
-#ifdef DEBUG
-        // Sending debug data on the UART
-        uint8_t str[] = "Long press Power Button\r\n";
-        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
-#endif
+        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
     }
 
     else if ((InputButton_State == CLOSE))
     {
         // Зафиксировано длинное нажатие кнопки INPUT
+        uint8_t str[] = "* Long press Input Button *\r\n";
+        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+
         InputButton_State = OPEN;
         LongPressInputButton_Handler();
-
-#ifdef DEBUG
-        // Sending debug data on the UART
-        uint8_t str[] = "Long press Input Button\r\n";
-        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
-#endif
+        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
     }
 
     else if ((OutputButton_State == CLOSE))
     {
         // Зафиксировано длинное нажатие кнопки OUTPUT
+        uint8_t str[] = "* Long press Output Button * \r\n";
+        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+
         OutputButton_State = OPEN;
         LongPressOutputButton_Handler();
-
-#ifdef DEBUG
-        // Sending debug data on the UART
-        uint8_t str[] = "Long press Output Button\r\n";
-        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
-#endif
+        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
     }
 
     DisplayUpdate_Task = TRUE; // Ставим флаг задачи обновления дисплея
