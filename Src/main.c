@@ -149,16 +149,19 @@ int main(void)
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
   sprintf(UART_BufSrting, "(c) M.Tsaryov, 2020.3 \r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "Flash ID: 0x%X\r\n", ExternalFlash_ReadID());
+  uint32_t TempBuf = ExternalFlash_ReadIdentification();
+  uint8_t ManufacturerID = TempBuf >> 16;
+  uint16_t DeviceID = TempBuf;
+  sprintf(UART_BufSrting, "Manufacturer ID: 0x%X\r\n", ManufacturerID);
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "Flash Status Register: 0x%02X\r\n", ExternalFlash_ReadStatusRegister());
+  sprintf(UART_BufSrting, "Device ID: 0x%X\r\n", DeviceID);
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
   sprintf(UART_BufSrting, "----------------------------\r\n");
   HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
 
 //   while (ExternalFlash_ReadStatusRegister() & BUSY);
 //   ExternalFlash_WriteByte(&ActiveInput, &SaveStartAddr);
-
+/*
     for (uint8_t i = 0; i < 6; i++)
     {
         sprintf(UART_BufSrting, "< %X\r\n", ExternalFlash_Read(&SaveStartAddr + i));
@@ -173,7 +176,7 @@ int main(void)
         sprintf(UART_BufSrting, "> %X\r\n", ExternalFlash_Read(&SaveStartAddr + i));
         HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
     }
-   
+   */
 
   // OLED Init
   disp1color_Init();

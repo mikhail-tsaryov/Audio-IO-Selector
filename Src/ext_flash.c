@@ -11,21 +11,44 @@ void ExternalFlash_Init(void)
 {
     HAL_GPIO_WritePin(FLASH_nWP_GPIO_Port, FLASH_nWP_Pin, GPIO_PIN_SET);
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
-    ExternalFlash_WriteStatusRegister(0);
 }
 
 /**
   * @brief Функция читает Manufacturer’s ID и Device ID
-  * @retval Старший байт - Manufacturer’s ID, младший байт - Device ID
+  * @retval Старший байт - Manufacturer’s ID, два младших байта - Device ID
   */
-uint16_t ExternalFlash_ReadID(void)
+uint32_t ExternalFlash_ReadIdentification(void)
 {
-    uint8_t SendBuf[4] = {RDID, 0x00, 0x00, 0x00};
-    uint16_t ReadBuf = 0; 
+    uint8_t SendBuf[4] = {0xAB, 0x00, 0x00, 0x00};
+    uint8_t ReadBuf[3] = {0}; 
 
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(&hspi1, SendBuf, 4, HAL_MAX_DELAY);
-    HAL_SPI_Receive(&hspi1, (uint8_t *)&ReadBuf, 2, HAL_MAX_DELAY);
+    HAL_SPI_Receive(&hspi1, ReadBuf, 3, HAL_MAX_DELAY);
+    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
+    
+    uint8_t ReadID_Cmd = 0x9F;
+
+    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
+    HAL_SPI_Transmit(&hspi1, &ReadID_Cmd, 1, HAL_MAX_DELAY);
+    HAL_SPI_Receive(&hspi1, ReadBuf, 3, HAL_MAX_DELAY);
+    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
+
+    return ((ReadBuf[0] << 16) | (ReadBuf[1] << 8) | ReadBuf[2]);
+}
+
+/**
+  * @brief Функция читает Manufacturer ID
+  * @retval Manufacturer ID
+  */
+uint8_t ExternalFlash_ReadManufacturerID(void)
+{
+    uint8_t ReadSR_Cmd = 0x9F;
+    uint8_t ReadBuf = 0;
+
+    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
+    HAL_SPI_Transmit(&hspi1, &ReadSR_Cmd, 1, HAL_MAX_DELAY);
+    HAL_SPI_Receive(&hspi1, (uint8_t *)&ReadBuf, 1, HAL_MAX_DELAY);
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
 
     return ReadBuf;
@@ -37,15 +60,8 @@ uint16_t ExternalFlash_ReadID(void)
   */
 uint8_t ExternalFlash_ReadStatusRegister(void)
 {
-    uint8_t ReadSR_Cmd = RDSR;
-    uint8_t ReadBuf = 0;
-
-    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi1, &ReadSR_Cmd, 1, HAL_MAX_DELAY);
-    HAL_SPI_Receive(&hspi1, (uint8_t *)&ReadBuf, 1, HAL_MAX_DELAY);
-    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
-
-    return ReadBuf;
+    /**/
+    return 0;
 }
 
 /**
@@ -120,6 +136,7 @@ void ExternalFlash_WriteByte(uint8_t *pData, uint32_t *pAddr)
 
 void ExternalFlash_WriteStatusRegister(uint8_t Value)
 {
+    /*
     uint8_t EnableWriteSR_Cmd = EWSR;
     uint8_t WriteBuf[2] = {WRSR, Value};
 
@@ -133,4 +150,5 @@ void ExternalFlash_WriteStatusRegister(uint8_t Value)
     HAL_SPI_Transmit(&hspi1, WriteBuf, 2, HAL_MAX_DELAY);
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
     ExternalFlash_WriteDisable();
+    */
 }
