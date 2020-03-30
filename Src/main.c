@@ -33,6 +33,7 @@
 #include "usbd_cdc_if.h"
 #include "buttons.h"
 #include "ext_flash.h"
+#include "uart_debug.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +43,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DEBUG
 
 /* USER CODE END PD */
 
@@ -90,8 +90,6 @@ uint8_t MuteButton_State = OPEN; // Переменная состояния кн
 
 uint32_t SaveStartAddr = 0x000000; // Начальный адрес сохранения настроек
 uint8_t FlashPageBuffer[256] = {0}; // Буфер чтения Flash
-// Дополнительно
-char UART_BufSrting[32];
 
 /* USER CODE END PV */
 
@@ -140,28 +138,13 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   ExternalFlash_Init();
-  uint32_t TempBuf = ExternalFlash_ReadIdentification();
-  uint8_t ManufacturerID = TempBuf >> 16;
-  uint16_t DeviceID = TempBuf;
-  sprintf(UART_BufSrting, "----------------------------\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "     Audio I/O Selector    \r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "----------------------------\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "(c) M.Tsaryov, 2020.3 \r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "Manufacturer ID: 0x%X\r\n", ManufacturerID);
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "Device ID: 0x%X\r\n", DeviceID);
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "Status Register: 0x%X\r\n", ExternalFlash_ReadStatusRegister());
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-  sprintf(UART_BufSrting, "----------------------------\r\n");
-  HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
 
-//   while (ExternalFlash_ReadStatusRegister() & BUSY);
-//   ExternalFlash_WriteByte(&ActiveInput, &SaveStartAddr);
+  #ifdef SERIAL_INFO_OUTPUT
+    SerialInfoOutput_PrintWelcomeInfo();
+  #endif
+
+  //   while (ExternalFlash_ReadStatusRegister() & BUSY);
+  //   ExternalFlash_WriteByte(&ActiveInput, &SaveStartAddr);
 
   // OLED Init
   disp1color_Init();
@@ -449,118 +432,6 @@ inline void RelaysModule_Reset(void)
 }
 
 /**
-  * @brief  Функция сохраняет все настройки во внешнюю память.
-  * @retval Нет
-  */
-void SaveSettingsToFlash(uint32_t *pBaseAddr)
-{
-    FlashPageBuffer[0] = ActiveInput;
-    FlashPageBuffer[1] = ActiveOutput;
-    FlashPageBuffer[2] = Lock_State;
-    FlashPageBuffer[3] = (Mute_State & AllowSaveMute_Flag);
-    FlashPageBuffer[4] = ModulesCount_Par;
-    FlashPageBuffer[5] = InputsCount_Par;
-    FlashPageBuffer[6] = InOutOrder_Par;
-
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-    ExternalFlash_WriteBlock(pBaseAddr);
-    while (ExternalFlash_ReadStatusRegister() & BUSY);
-
-    ExternalFlash_ReadPage(pBaseAddr);
-
-    sprintf(UART_BufSrting, "------ Saved settings ------\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", FlashPageBuffer[0] + 1);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", FlashPageBuffer[1] + 1);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", FlashPageBuffer[2]);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", FlashPageBuffer[3]);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", FlashPageBuffer[4]);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", FlashPageBuffer[5]);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", FlashPageBuffer[6]);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "----------------------------\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-}
-
-/**
-  * @brief  Функция загружает все настройки из внешней памяти.
-  * @retval Нет
-  */
-void LoadSettingsFromFlash(uint32_t *pBaseAddr)
-{
-    ExternalFlash_ReadPage(pBaseAddr);
-    uint8_t TempActiveInput = FlashPageBuffer[0];
-    uint8_t TempActiveOutput = FlashPageBuffer[1];
-    uint8_t TempLock_State = FlashPageBuffer[2];
-    uint8_t TempMute_State = FlashPageBuffer[3];
-    uint8_t TempModulesCount_Par = FlashPageBuffer[4];
-    uint8_t TempInputsCount_Par = FlashPageBuffer[5];
-    uint8_t TempInOutOrder_Par = FlashPageBuffer[6];
-    
-    if ((TempModulesCount_Par > 0) & (TempModulesCount_Par <= MAX_MODULES))
-    {
-        ModulesCount_Par = TempModulesCount_Par;
-    }
-
-    if ((TempInputsCount_Par > 0) & (TempInputsCount_Par <= ModulesCount_Par * RELAY_CNT - 1))
-    {
-        InputsCount_Par = TempInputsCount_Par;
-        OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
-    }
-
-    if ((TempActiveInput >= 0) & (TempActiveInput < InputsCount_Par))
-    {
-        ActiveInput = TempActiveInput;
-    }
-
-    if ((TempActiveOutput >= 0) & (TempActiveOutput < OutputsCount_Par))
-    {
-        ActiveOutput = TempActiveOutput;
-    }
-
-    if ((TempInOutOrder_Par == IN_OUT) | (TempInOutOrder_Par == OUT_IN))
-    {
-        InOutOrder_Par = TempInOutOrder_Par;
-    }
-
-    if ((TempLock_State == OFF) | (TempLock_State == ON))
-    {
-        Lock_State = TempLock_State;
-    }
-
-    if ((TempMute_State == OFF) | (TempMute_State == ON))
-    {
-        Mute_State = TempMute_State;
-    }
-
-    // Вывод в консоль
-    sprintf(UART_BufSrting, "------ Loaded settings -----\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", TempActiveInput + 1);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", TempActiveOutput + 1);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", TempLock_State);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", TempMute_State);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", TempModulesCount_Par);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", TempInputsCount_Par);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", TempInOutOrder_Par);
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-    sprintf(UART_BufSrting, "----------------------------\r\n");
-    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
-}
-
-/**
   * @brief  Функция-обработчик внешних прерываний.
   * @retval Нет
   */
@@ -569,7 +440,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     // Если не запущена обработка другой кнопки
     if ((GPIO_Pin == BTN_PWR_Pin) | (GPIO_Pin == BTN_IN_Pin) | (GPIO_Pin == BTN_OUT_Pin))
     {
-        DeBouncer_Timer = DEBOUCE_TIME; // Инициализируем таймер
+        DeBouncer_Timer = DEBOUCE_TIME; // �?нициализируем таймер
         DeBouncer_Task = TRUE;          // Взводим флаг задачи подавления дребезга
     }
 }

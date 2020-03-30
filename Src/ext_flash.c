@@ -2,6 +2,7 @@
 #include "ext_flash.h"
 #include "spi.h"
 #include "usart.h"
+#include "uart_debug.h"
 
 /**
   * @brief Функция инициализации
@@ -118,6 +119,78 @@ void ExternalFlash_WriteBlock(uint32_t *pAddr)
     while (ExternalFlash_ReadStatusRegister() & BUSY);
     //ExternalFlash_WriteDisable();
     HAL_GPIO_WritePin(FLASH_nWP_GPIO_Port, FLASH_nWP_Pin, GPIO_PIN_RESET);
+}
+
+/**
+  * @brief  Функция сохраняет все настройки во внешнюю память.
+  * @retval Нет
+  */
+void SaveSettingsToFlash(uint32_t *pBaseAddr)
+{
+    FlashPageBuffer[0] = ActiveInput;
+    FlashPageBuffer[1] = ActiveOutput;
+    FlashPageBuffer[2] = Lock_State;
+    FlashPageBuffer[3] = (Mute_State & AllowSaveMute_Flag);
+    FlashPageBuffer[4] = ModulesCount_Par;
+    FlashPageBuffer[5] = InputsCount_Par;
+    FlashPageBuffer[6] = InOutOrder_Par;
+
+    while (ExternalFlash_ReadStatusRegister() & BUSY);
+    ExternalFlash_WriteBlock(pBaseAddr);
+    //while (ExternalFlash_ReadStatusRegister() & BUSY);
+
+    #ifdef SERIAL_INFO_OUTPUT
+        SerialInfoOutput_PrintSavedParameters(pBaseAddr);
+    #endif
+}
+
+/**
+  * @brief  Функция загружает все настройки из внешней памяти.
+  * @retval Нет
+  */
+void LoadSettingsFromFlash(uint32_t *pBaseAddr)
+{
+    ExternalFlash_ReadPage(pBaseAddr);
+
+    if ((FlashPageBuffer[4] > 0) & (FlashPageBuffer[4] <= MAX_MODULES))
+    {
+        ModulesCount_Par = FlashPageBuffer[4];
+    }
+
+    if ((FlashPageBuffer[5] > 0) & (FlashPageBuffer[5] <= ModulesCount_Par * RELAY_CNT - 1))
+    {
+        InputsCount_Par = FlashPageBuffer[5];
+        OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
+    }
+
+    if ((FlashPageBuffer[0] >= 0) & (FlashPageBuffer[0] < InputsCount_Par))
+    {
+        ActiveInput = FlashPageBuffer[0];
+    }
+
+    if ((FlashPageBuffer[1] >= 0) & (FlashPageBuffer[1] < OutputsCount_Par))
+    {
+        ActiveOutput = FlashPageBuffer[1];
+    }
+
+    if ((FlashPageBuffer[6] == IN_OUT) | (FlashPageBuffer[6] == OUT_IN))
+    {
+        InOutOrder_Par = FlashPageBuffer[6];
+    }
+
+    if ((FlashPageBuffer[2] == OFF) | (FlashPageBuffer[2] == ON))
+    {
+        Lock_State = FlashPageBuffer[2];
+    }
+
+    if ((FlashPageBuffer[3] == OFF) | (FlashPageBuffer[3] == ON))
+    {
+        Mute_State = FlashPageBuffer[3];
+    }
+
+    #ifdef SERIAL_INFO_OUTPUT
+        SerialInfoOutput_PrintLoadedParameters();
+    #endif
 }
 
 void ExternalFlash_WriteStatusRegister(uint8_t Value)

@@ -30,9 +30,7 @@ void ShortPressPowerButton_Handler(void)
         #endif
         disp1color_UpdateFromBuff();
         
-        HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
         HAL_Delay(WELCOME_TIME);
-        HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
         PowerLED_Off(); // Отключить светодиод питания
     }

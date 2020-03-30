@@ -206,7 +206,7 @@ void SysTick_Handler(void)
       if (LongPress_Timer == 0)                 // Если досчитали до конца,
       {
           CountdownLongPress_Task = FALSE;      // снимаем задачу,
-          LongPress_Timer = LONGPRESS_TIME;     // �?нициализируем таймер долгого нажатия
+          LongPress_Timer = LONGPRESS_TIME;     // Инициализируем таймер долгого нажатия
           ScanButtonsLong_Task = TRUE;          // и ставим флаг задачи сканирования кнопок
       }
   }
@@ -259,7 +259,7 @@ void EXTI15_10_IRQHandler(void)
   /* USER CODE END EXTI15_10_IRQn 0 */
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_10);
   HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_11);
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_14);
+  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
   /* USER CODE END EXTI15_10_IRQn 1 */

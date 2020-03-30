@@ -47,7 +47,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define DEBUG
+#define SERIAL_INFO_OUTPUT
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -119,13 +119,13 @@ extern void LoadSettingsFromFlash(uint32_t *);
 #define BTN_OUT_Pin GPIO_PIN_11
 #define BTN_OUT_GPIO_Port GPIOB
 #define BTN_OUT_EXTI_IRQn EXTI15_10_IRQn
-#define BTN_PWR_Pin GPIO_PIN_14
-#define BTN_PWR_GPIO_Port GPIOB
-#define BTN_PWR_EXTI_IRQn EXTI15_10_IRQn
 #define UART_DBG_TX_Pin GPIO_PIN_9
 #define UART_DBG_TX_GPIO_Port GPIOA
 #define UART_DBG_RX_Pin GPIO_PIN_10
 #define UART_DBG_RX_GPIO_Port GPIOA
+#define BTN_PWR_Pin GPIO_PIN_15
+#define BTN_PWR_GPIO_Port GPIOA
+#define BTN_PWR_EXTI_IRQn EXTI15_10_IRQn
 #define FLASH_nWP_Pin GPIO_PIN_6
 #define FLASH_nWP_GPIO_Port GPIOB
 #define LED_PWR_Pin GPIO_PIN_7
@@ -175,7 +175,7 @@ extern void LoadSettingsFromFlash(uint32_t *);
 #define MAX_MODULES 4 // Максимально поддерживаемое количество релейных модулей
 #define RELAY_CNT 8   // Количество реле в одном релейном модуле
 
-#define DEBOUCE_TIME 50U
+#define DEBOUCE_TIME 20U
 #define LONGPRESS_TIME 800U
 #define DISPLAYUPDATE_TIME 30U
 #define WELCOME_TIME 3000U

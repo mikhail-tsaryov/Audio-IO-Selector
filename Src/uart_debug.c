@@ -1,0 +1,72 @@
+#include "uart_debug.h"
+
+// Буфер строки для подготовки к выводу по UART
+char UART_BufSrting[32];
+
+void SerialInfoOutput_PrintWelcomeInfo(void)
+{
+    uint32_t TempBuf = ExternalFlash_ReadIdentification();
+    uint8_t ManufacturerID = TempBuf >> 16;
+    uint16_t DeviceID = TempBuf;
+    sprintf(UART_BufSrting, "----------------------------\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "     Audio I/O Selector    \r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "----------------------------\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "(c) M.Tsaryov, 2020.3 \r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Manufacturer ID: 0x%X\r\n", ManufacturerID);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Device ID: 0x%X\r\n", DeviceID);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Status Register: 0x%X\r\n", ExternalFlash_ReadStatusRegister());
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "----------------------------\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+}
+
+void SerialInfoOutput_PrintSavedParameters(uint32_t *pAddr)
+{
+    ExternalFlash_ReadPage(pAddr);
+    sprintf(UART_BufSrting, "------ Saved settings ------\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", FlashPageBuffer[0] + 1);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", FlashPageBuffer[1] + 1);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", FlashPageBuffer[2]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", FlashPageBuffer[3]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", FlashPageBuffer[4]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", FlashPageBuffer[5]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", FlashPageBuffer[6]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "----------------------------\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+}
+
+void SerialInfoOutput_PrintLoadedParameters(void)
+{
+    sprintf(UART_BufSrting, "------ Loaded settings -----\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Active Input:\t\t%X\r\n", FlashPageBuffer[0] + 1);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Active Output:\t\t%X\r\n", FlashPageBuffer[1] + 1);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Lock State:\t\t%X\r\n", FlashPageBuffer[2]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Mute State:\t\t%X\r\n", FlashPageBuffer[3]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Modules Count:\t\t%X\r\n", FlashPageBuffer[4]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "Inputs Count:\t\t%X\r\n", FlashPageBuffer[5]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "I/O Order:\t\t%X\r\n", FlashPageBuffer[6]);
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+    sprintf(UART_BufSrting, "----------------------------\r\n");
+    HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
+}
