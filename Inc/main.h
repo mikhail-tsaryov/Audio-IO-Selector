@@ -47,7 +47,9 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define SERIAL_INFO_OUTPUT
+#define INFO_OUTPUT
+//#define USB_INFO_OUTPUT
+
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
@@ -179,6 +181,7 @@ extern void LoadSettingsFromFlash(uint32_t *);
 #define LONGPRESS_TIME 800U
 #define DISPLAYUPDATE_TIME 30U
 #define WELCOME_TIME 3000U
+
 
 /* USER CODE END Private defines */
 

@@ -1,5 +1,5 @@
-#ifndef _UART_DEBUG_H
-#define _UART_DEBUG_H
+#ifndef _INFO_OUTPUT_H
+#define _INFO_OUTPUT_H
 
 #include "main.h"
 #include <string.h>

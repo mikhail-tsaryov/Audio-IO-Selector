@@ -33,7 +33,7 @@
 #include "usbd_cdc_if.h"
 #include "buttons.h"
 #include "ext_flash.h"
-#include "uart_debug.h"
+#include "info_output.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -139,59 +139,56 @@ int main(void)
 
   ExternalFlash_Init();
 
-  #ifdef SERIAL_INFO_OUTPUT
+  #ifdef INFO_OUTPUT
     SerialInfoOutput_PrintWelcomeInfo();
   #endif
 
-  //   while (ExternalFlash_ReadStatusRegister() & BUSY);
-  //   ExternalFlash_WriteByte(&ActiveInput, &SaveStartAddr);
+    // OLED Init
+    disp1color_Init();
+    disp1color_SetBrightness(255);
+    disp1color_Sleep();
 
-  // OLED Init
-  disp1color_Init();
-  disp1color_SetBrightness(255);
-  disp1color_Sleep();
+    // Enable Power LED
+    PowerLED_On();
 
-  // Enable Power LED
-  PowerLED_On();
+    /* USER CODE END 2 */
 
-  /* USER CODE END 2 */
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
+    while (1)
+    {
+        // Если есть задача сканировать короткие нажатия кнопок
+        if (ScanButtonsShort_Task == TRUE)
+        {
+            ScanButtonsShort_Task = FALSE;
+            ShortButtonPresses_Pooling();
+        }
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-      // Если есть задача сканировать короткие нажатия кнопок
-      if (ScanButtonsShort_Task == TRUE)
-      {
-          ScanButtonsShort_Task = FALSE;
-          ShortButtonPresses_Pooling();
-      }
+        // Если есть задача сканировать долгие нажатия кнопок
+        if (ScanButtonsLong_Task == TRUE)
+        {
+            ScanButtonsLong_Task = FALSE;
+            LongButtonPresses_Pooling();
+        }
 
-      // Если есть задача сканировать долгие нажатия кнопок
-      if (ScanButtonsLong_Task == TRUE)
-      {
-          ScanButtonsLong_Task = FALSE;
-          LongButtonPresses_Pooling();
-      }
+        // Если есть задача отправить данные в релейный модуль
+        if (RelaysUpdate_Task == TRUE)
+        {
+            RelaysUpdate_Task = FALSE;
+            RelaysModule_Update(ActiveInput, ActiveOutput, Mute_State);
+        }
 
-      // Если есть задача отправить данные в релейный модуль
-      if (RelaysUpdate_Task == TRUE)
-      {
-          RelaysUpdate_Task = FALSE;
-          RelaysModule_Update(ActiveInput, ActiveOutput, Mute_State);
-      }
+        // Если есть задача обновления дисплея
+        if (DisplayUpdate_Task == TRUE)
+        {
+            DisplayUpdate_Task = FALSE;
+            Display_Update();
+        }
+        /* USER CODE END WHILE */
 
-      // Если есть задача обновления дисплея
-      if (DisplayUpdate_Task == TRUE)
-      {
-          DisplayUpdate_Task = FALSE;
-          Display_Update();
-      }
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
+        /* USER CODE BEGIN 3 */
+    }
+    /* USER CODE END 3 */
 }
 
 /**
@@ -440,7 +437,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     // Если не запущена обработка другой кнопки
     if ((GPIO_Pin == BTN_PWR_Pin) | (GPIO_Pin == BTN_IN_Pin) | (GPIO_Pin == BTN_OUT_Pin))
     {
-        DeBouncer_Timer = DEBOUCE_TIME; // �?нициализируем таймер
+        DeBouncer_Timer = DEBOUCE_TIME; // �?нициализируем таймер
         DeBouncer_Task = TRUE;          // Взводим флаг задачи подавления дребезга
     }
 }

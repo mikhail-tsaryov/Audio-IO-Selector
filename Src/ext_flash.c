@@ -2,7 +2,7 @@
 #include "ext_flash.h"
 #include "spi.h"
 #include "usart.h"
-#include "uart_debug.h"
+#include "info_output.h"
 
 /**
   * @brief Функция инициализации
@@ -139,7 +139,7 @@ void SaveSettingsToFlash(uint32_t *pBaseAddr)
     ExternalFlash_WriteBlock(pBaseAddr);
     //while (ExternalFlash_ReadStatusRegister() & BUSY);
 
-    #ifdef SERIAL_INFO_OUTPUT
+    #ifdef INFO_OUTPUT
         SerialInfoOutput_PrintSavedParameters(pBaseAddr);
     #endif
 }
@@ -187,10 +187,6 @@ void LoadSettingsFromFlash(uint32_t *pBaseAddr)
     {
         Mute_State = FlashPageBuffer[3];
     }
-
-    #ifdef SERIAL_INFO_OUTPUT
-        SerialInfoOutput_PrintLoadedParameters();
-    #endif
 }
 
 void ExternalFlash_WriteStatusRegister(uint8_t Value)

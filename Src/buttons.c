@@ -11,6 +11,10 @@ void ShortPressPowerButton_Handler(void)
     {
         System_State = NORMAL; // Сменить режим работы
         LoadSettingsFromFlash(&SaveStartAddr);
+        
+        #ifdef INFO_OUTPUT
+            SerialInfoOutput_PrintLoadedParameters();
+        #endif
         AllowSaveMute_Flag = TRUE;
         RelaysModuleUpdate_Task = TRUE;
 
@@ -24,6 +28,7 @@ void ShortPressPowerButton_Handler(void)
         disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
         disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c M.Tsaryov, %d.3", 0xA9, 2020);
         #else
+        // TODO: Решить проблему с неверной кодировкой. Переделать шрифты???
         disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
         disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
         disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
@@ -45,6 +50,9 @@ void ShortPressPowerButton_Handler(void)
         Mute_State = ON;
         RelaysModuleUpdate_Task = TRUE;
         PowerLED_On(); // Включить светодиод питания
+        #ifdef INFO_OUTPUT
+            SerialInfoOutput_PrintGoodbyeInfo();
+        #endif
     }
     // Если текущий режим SETUP
     else if (System_State == SETUP)
