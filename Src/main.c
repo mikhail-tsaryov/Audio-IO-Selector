@@ -1,4 +1,4 @@
-/* USER CODE BEGIN Header */
+﻿/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.c
@@ -437,7 +437,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     // Если не запущена обработка другой кнопки
     if ((GPIO_Pin == BTN_PWR_Pin) | (GPIO_Pin == BTN_IN_Pin) | (GPIO_Pin == BTN_OUT_Pin))
     {
-        DeBouncer_Timer = DEBOUCE_TIME; // �?нициализируем таймер
+        DeBouncer_Timer = DEBOUCE_TIME; // Инициализируем таймер
         DeBouncer_Task = TRUE;          // Взводим флаг задачи подавления дребезга
     }
 }

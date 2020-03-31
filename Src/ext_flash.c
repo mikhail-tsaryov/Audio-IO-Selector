@@ -1,4 +1,4 @@
-#include <string.h>
+﻿#include <string.h>
 #include "ext_flash.h"
 #include "spi.h"
 #include "usart.h"

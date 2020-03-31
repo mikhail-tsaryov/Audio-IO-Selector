@@ -1,4 +1,4 @@
-#ifndef _INFO_OUTPUT_H
+﻿#ifndef _INFO_OUTPUT_H
 #define _INFO_OUTPUT_H
 
 #include "main.h"
