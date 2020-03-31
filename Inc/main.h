@@ -1,4 +1,4 @@
-п»ї/* USER CODE BEGIN Header */
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file           : main.h
@@ -101,6 +101,8 @@ extern void RelaysModule_Reset(void);
 extern void Display_Update(void);
 extern void SaveSettingsToFlash(uint32_t *);
 extern void LoadSettingsFromFlash(uint32_t *);
+extern void Tasks_Pooling(void);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -139,13 +141,6 @@ extern void LoadSettingsFromFlash(uint32_t *);
 #define SPI_nCS_FLASH_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
-#define OLED_Enable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_RESET) // РњР°РєСЂРѕСЃ Р°РєС‚РёРІР°С†РёРё РґРёСЃРїР»РµСЏ
-#define OLED_Disable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_SET) // РњР°РєСЂРѕСЃ РґРµР°РєС‚РёРІР°С†РёРё РґРёСЃРїР»РµСЏ
-#define OLED_DataEnable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_SET) // РњР°РєСЂРѕСЃ Р°РїРµСЂРµРєР»СЋС‡РµРЅРёСЏ РґРёСЃРїР»РµСЏ РІ СЂРµР¶РёРј РґР°РЅРЅС‹С…
-#define OLED_CommandEnable() HAL_GPIO_WritePin(SPI_nCS_OLED_GPIO_Port, SPI_nCS_OLED_Pin, GPIO_PIN_RESET) // РњР°РєСЂРѕСЃ РїРµСЂРµРєР»СЋС‡РµРЅРёСЏ РґРёСЃРїР»РµСЏ РІ СЂРµР¶РёРј РєРѕРјР°РЅРґ
-
-#define RelaysModule_Enable() HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_RESET) // РњР°РєСЂРѕСЃ Р°РєС‚РёРІР°С†РёРё СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ
-#define RelaysModule_Disable() HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_SET) // РњР°РєСЂРѕСЃ РґРµР°РєС‚РёРІР°С†РёРё СЃРґРІРёРіРѕРІРѕРіРѕ СЂРµРіРёСЃС‚СЂР°
 
 #define FALSE 0
 #define TRUE 1
@@ -153,38 +148,44 @@ extern void LoadSettingsFromFlash(uint32_t *);
 #define OFF 0
 #define ON 1
 
-#define OPEN 0
-#define CLOSE 1
+// Состояния кнопок
+#define OPEN 0 // Отпущена
+#define CLOSE 1 // Нажата
 
-#define NORMAL 0
-#define SETUP 1
-#define STANDBY 2
-#define EMERGENCY 3
+// Режимы работы устройства
+#define NORMAL 0 // Нормальный
+#define SETUP 1 // Настройка
+#define STANDBY 2 // Дежурный
+#define EMERGENCY 3 // Аварийный
+// Режимы настройки
+#define SETUP_PAGE1 0 // Страница 1
+#define SETUP_PAGE2 1 // Страница 2
+#define SETUP_PAGE3 2 // Страница 3
+#define SETUP_PAGE4 3 // Страница 4
 
-#define SETUP_PAGE1 0
-#define SETUP_PAGE2 1
-#define SETUP_PAGE3 2
-#define SETUP_PAGE4 3
-
+// Цвет дисплея
 #define BLACK 0 // Black color, no pixel
 #define WHITE 1 // Pixel is set. Color depends on OLED
 
-#define IN_OUT 0 // Р’С…РѕРґС‹/РІС‹С…РѕРґС‹
-#define OUT_IN 1 // Р’С‹С…РѕРґС‹/РІС…РѕРґС‹
+// Порядок расположения разъемов на устройстве
+#define IN_OUT 0 // Входы/выходы
+#define OUT_IN 1 // Выходы/входы
+/*
+// Способ отображения имен входов/выходов
+#define NUMBERS 0 // В виде номеров
+#define NAMES 1 // Ввиде имен
+*/
+// Параметры плат(ы) релейного модуля
+#define MAX_MODULES 4 // Максимальное количество плат
+#define RELAY_CNT 8   // Количество реле на одной плате
 
-#define NUMBERS 0 // РћС‚РѕР±СЂР°Р¶РµРЅРёРµ С†РёС„СЂР°РјРё
-#define NAMES 1 // РћС‚РѕР±СЂР°Р¶РµРЅРёРµ РёРјРµРЅР°РјРё
+// Временные константы
+#define DEBOUCE_TIME 30U    // Время фильтрации дребезга контактов
+#define LONGPRESS_TIME 800U // Время фиксации длинного нажатия
+//#define DISPLAYUPDATE_TIME 30U //
+#define WELCOME_TIME 3000U // Время показа заставки
 
-#define MAX_MODULES 4 // РњР°РєСЃРёРјР°Р»СЊРЅРѕ РїРѕРґРґРµСЂР¶РёРІР°РµРјРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР»РµР№РЅС‹С… РјРѕРґСѓР»РµР№
-#define RELAY_CNT 8   // РљРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР»Рµ РІ РѕРґРЅРѕРј СЂРµР»РµР№РЅРѕРј РјРѕРґСѓР»Рµ
-
-#define DEBOUCE_TIME 20U
-#define LONGPRESS_TIME 800U
-#define DISPLAYUPDATE_TIME 30U
-#define WELCOME_TIME 3000U
-
-
-/* USER CODE END Private defines */
+    /* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }

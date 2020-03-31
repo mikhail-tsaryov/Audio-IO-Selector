@@ -18,24 +18,7 @@ void ShortPressPowerButton_Handler(void)
         AllowSaveMute_Flag = TRUE;
         RelaysModuleUpdate_Task = TRUE;
 
-        disp1color_Wake();
-        // Приветствие
-        disp1color_FillScreenbuff(0);
-        //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
-
-        #ifndef RUS_LANG
-        disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
-        disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
-        disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c M.Tsaryov, %d.3", 0xA9, 2020);
-        #else
-        // TODO: Решить проблему с неверной кодировкой. Переделать шрифты???
-        disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
-        disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
-        disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
-        #endif
-        disp1color_UpdateFromBuff();
-        
-        HAL_Delay(WELCOME_TIME);
+        Display_Intro(WELCOME_TIME);
 
         PowerLED_Off(); // Отключить светодиод питания
     }
@@ -329,7 +312,7 @@ void ShortButtonPresses_Pooling(void)
         {
             // Зафиксировано короткое нажатие кнопки POWER
             uint8_t str[] = "* Short press Power Button *\r\n";
-            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+            HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
 
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             PowerButton_State = OPEN;
@@ -351,7 +334,7 @@ void ShortButtonPresses_Pooling(void)
         {
             // Зафиксировано короткое нажатие кнопки INPUT
             uint8_t str[] = "* Short press Input Button *\r\n";
-            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+            HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
 
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             InputButton_State = OPEN;
@@ -373,7 +356,7 @@ void ShortButtonPresses_Pooling(void)
         {
             // Зафиксировано короткое нажатие кнопки OUTPUT
             uint8_t str[] = "* Short press Output Button *\r\n";
-            HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+            HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
 
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             OutputButton_State = OPEN;
@@ -395,7 +378,7 @@ void LongButtonPresses_Pooling(void)
     {
         // Зафиксировано длинное нажатие кнопки POWER
         uint8_t str[] = "* Long press Power Button *\r\n";
-        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+        HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
 
         PowerButton_State = OPEN;
         LongPressPowerButton_Handler();
@@ -406,7 +389,7 @@ void LongButtonPresses_Pooling(void)
     {
         // Зафиксировано длинное нажатие кнопки INPUT
         uint8_t str[] = "* Long press Input Button *\r\n";
-        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+        HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
 
         InputButton_State = OPEN;
         LongPressInputButton_Handler();
@@ -417,7 +400,7 @@ void LongButtonPresses_Pooling(void)
     {
         // Зафиксировано длинное нажатие кнопки OUTPUT
         uint8_t str[] = "* Long press Output Button * \r\n";
-        HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
+        HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
 
         OutputButton_State = OPEN;
         LongPressOutputButton_Handler();

@@ -1,4 +1,4 @@
-﻿#ifndef _BUTTONS_H
+#ifndef _BUTTONS_H
 #define _BUTTONS_H
 
 #include "main.h"
@@ -6,6 +6,8 @@
 #include <string.h>
 #include "disp1color.h"
 #include "usart.h"
+#include "display.h"
+#include "info_output.h"
 
 extern uint32_t SaveStartAddr;
 
