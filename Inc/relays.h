@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-void RelaysModule_Update(uint16_t Input, uint16_t Output, uint16_t Mute);
+void RelaysModule_Update(uint8_t Input, uint8_t Output, uint8_t Mute);
 void RelaysModule_Reset(void);
 
 #endif

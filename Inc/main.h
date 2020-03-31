@@ -57,13 +57,13 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-// РџР°СЂР°РјРµС‚СЂС‹
-extern uint8_t ModulesCount_Par;        // РљРѕР»РёС‡РµСЃС‚РІРѕ СЂРµР»РµР№РЅС‹С… РјРѕРґСѓР»РµР№
-extern uint8_t InputsCount_Par;         // РљРѕР»РёС‡РµСЃС‚РІРѕ РІС…РѕРґРѕРІ РІ РјРѕРґСѓР»Рµ
-extern uint8_t OutputsCount_Par;        // РљРѕР»РёС‡РµСЃС‚РІРѕ РІС‹С…РѕРґРѕРІ РІ РјРѕРґСѓР»Рµ
-extern uint8_t InOutOrder_Par;     // РџР°СЂР°РјРµС‚СЂ, РѕС‚РІРµС‡Р°СЋС‰РёР№ Р·Р° РїРѕСЂСЏРґРѕРє СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ РЅР° СЂР°Р·СЉРµРјР°С… - РІС…РѕРґС‹/РІС‹С…РѕРґС‹ РёР»Рё РІС‹С…РѕРґС‹/РІС…РѕРґС‹
-extern uint8_t IODisplayMode_Par; // РџР°СЂР°РјРµС‚СЂ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ РІС…РѕРґРѕРІ/РІС‹С…РѕРґРѕРІ (С†РёС„СЂР°РјРё РёР»Рё РёРјРµРЅР°РјРё)
-// Р¤Р»Р°РіРё Р·Р°РґР°С‡
+// Параметры
+extern uint8_t ModulesCount_Par;        // Количество релейных модулей
+extern uint8_t InputsCount_Par;         // Количество входов в модуле
+extern uint8_t OutputsCount_Par;        // Количество выходов в модуле
+extern uint8_t InOutOrder_Par;     // Параметр, отвечающий за порядок расположения на разъемах - входы/выходы или выходы/входы
+extern uint8_t IODisplayMode_Par; // Параметр отображения входов/выходов (цифрами или именами)
+// Флаги задач
 extern volatile uint8_t CountdownLongPress_Task;
 extern volatile uint8_t DeBouncer_Task;
 extern volatile uint8_t ScanButtonsShort_Task;
@@ -71,32 +71,32 @@ extern volatile uint8_t ScanButtonsLong_Task;
 extern volatile uint8_t RelaysUpdate_Task;
 extern volatile uint8_t RelaysModuleUpdate_Task;
 extern volatile uint8_t DisplayUpdate_Task;
-// Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ С„Р»Р°РіРё
-extern volatile uint8_t AllowSaveMute_Flag; // Р¤Р»Р°Рі СЂР°Р·СЂРµС€РµРЅРёСЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ MUTE
-// РўР°Р№РјРµСЂС‹
+// Дополнительные флаги
+extern volatile uint8_t AllowSaveMute_Flag; // Флаг разрешения сохранения состояния MUTE
+// Таймеры
 extern volatile uint16_t DeBouncer_Timer;
 extern volatile uint16_t LongPress_Timer;
 extern volatile uint16_t DisplayUpdate_Timer;
-// РџРµСЂРµРјРµРЅРЅС‹Рµ СЃРѕСЃС‚РѕСЏРЅРёСЏ
-extern uint8_t System_State; // РўРµРєСѓС‰РёР№ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹ СѓСЃС‚СЂРѕР№СЃС‚РІР°
-extern uint8_t SetupStage_State;   // РўРµРєСѓС‰РёР№ СЌС‚Р°Рї СЂРµР¶РёРјР° РЅР°СЃС‚СЂРѕР№РєРё
-extern uint8_t Mute_State;     // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ СЂРµР¶РёРјР° MUTE
-extern uint8_t Lock_State;     // РїРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ Р±Р»РѕРєРёСЂРѕРІРєРё РёР·РјРµРЅРµРЅРёСЏ РІС…РѕРґРѕРІ Рё РІС‹С…РѕРґРѕРІ
-extern uint8_t ActiveInput;        // РўРµРєСѓС‰РёР№ РІС…РѕРґ
-extern uint8_t ActiveOutput;       // РўРµРєСѓС‰РёР№ РІС‹С…РѕРґ
-// РЎРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРѕРє
-extern uint8_t PowerButton_State; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё POWER
-extern uint8_t InputButton_State; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё INPUT
-extern uint8_t OutputButton_State; // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё OUTPUT
-extern uint8_t LockButton_State;   // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё LOCK (РґРѕР»РіРѕРµ РЅР°Р¶Р°С‚РёРµ INPUT)
-extern uint8_t MuteButton_State;   // РџРµСЂРµРјРµРЅРЅР°СЏ СЃРѕСЃС‚РѕСЏРЅРёСЏ РєРЅРѕРїРєРё MUTE (РґРѕР»РіРѕРµ РЅР°Р¶Р°С‚РёРµ OUTPUT)
+// Переменные состояния
+extern uint8_t System_State; // Текущий режим работы устройства
+extern uint8_t SetupStage_State;   // Текущий этап режима настройки
+extern uint8_t Mute_State;     // Переменная состояния режима MUTE
+extern uint8_t Lock_State;     // переменная состояния блокировки изменения входов и выходов
+extern uint8_t ActiveInput;        // Текущий вход
+extern uint8_t ActiveOutput;       // Текущий выход
+// Состояния кнопок
+extern uint8_t PowerButton_State; // Переменная состояния кнопки POWER
+extern uint8_t InputButton_State; // Переменная состояния кнопки INPUT
+extern uint8_t OutputButton_State; // Переменная состояния кнопки OUTPUT
+extern uint8_t LockButton_State;   // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
+extern uint8_t MuteButton_State;   // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
 
-extern uint32_t SaveStartAddr; // РќР°С‡Р°Р»СЊРЅС‹Р№ Р°РґСЂРµСЃ СЃРѕС…СЂР°РЅРµРЅРёСЏ РЅР°СЃС‚СЂРѕРµРє
+extern uint32_t SaveStartAddr; // Начальный адрес сохранения настроек
 extern uint8_t FlashPageBuffer[256];
 
 extern void PowerLED_On(void);
 extern void PowerLED_Off(void);
-extern void RelaysModule_Update(uint16_t, uint16_t, uint16_t);
+extern void RelaysModule_Update(uint8_t, uint8_t, uint8_t);
 extern void RelaysModule_Reset(void);
 extern void Display_Update(void);
 extern void SaveSettingsToFlash(uint32_t *);
@@ -148,42 +148,42 @@ extern void Tasks_Pooling(void);
 #define OFF 0
 #define ON 1
 
-// Состояния кнопок
-#define OPEN 0 // Отпущена
-#define CLOSE 1 // Нажата
+//  
+#define OPEN 0 // 
+#define CLOSE 1 // 
 
-// Режимы работы устройства
-#define NORMAL 0 // Нормальный
-#define SETUP 1 // Настройка
-#define STANDBY 2 // Дежурный
-#define EMERGENCY 3 // Аварийный
-// Режимы настройки
-#define SETUP_PAGE1 0 // Страница 1
-#define SETUP_PAGE2 1 // Страница 2
-#define SETUP_PAGE3 2 // Страница 3
-#define SETUP_PAGE4 3 // Страница 4
+//   
+#define NORMAL 0 // 
+#define SETUP 1 // 
+#define STANDBY 2 // 
+#define EMERGENCY 3 // 
+//  
+#define SETUP_PAGE1 0 //  1
+#define SETUP_PAGE2 1 //  2
+#define SETUP_PAGE3 2 //  3
+#define SETUP_PAGE4 3 //  4
 
-// Цвет дисплея
+//  
 #define BLACK 0 // Black color, no pixel
 #define WHITE 1 // Pixel is set. Color depends on OLED
 
-// Порядок расположения разъемов на устройстве
-#define IN_OUT 0 // Входы/выходы
-#define OUT_IN 1 // Выходы/входы
+//     
+#define IN_OUT 0 // /
+#define OUT_IN 1 // /
 /*
-// Способ отображения имен входов/выходов
-#define NUMBERS 0 // В виде номеров
-#define NAMES 1 // Ввиде имен
+//    /
+#define NUMBERS 0 //   
+#define NAMES 1 //  
 */
-// Параметры плат(ы) релейного модуля
-#define MAX_MODULES 4 // Максимальное количество плат
-#define RELAY_CNT 8   // Количество реле на одной плате
+//  ()  
+#define MAX_MODULES 4 //   
+#define RELAY_CNT 8   //     
 
-// Временные константы
-#define DEBOUCE_TIME 30U    // Время фильтрации дребезга контактов
-#define LONGPRESS_TIME 800U // Время фиксации длинного нажатия
+//  
+#define DEBOUCE_TIME 30U    //    
+#define LONGPRESS_TIME 800U //    
 //#define DISPLAYUPDATE_TIME 30U //
-#define WELCOME_TIME 3000U // Время показа заставки
+#define WELCOME_TIME 3000U //   
 
     /* USER CODE END Private defines */
 

@@ -130,7 +130,7 @@ void Display_Update(void)
   * @brief  Функция вывода на дисплей приветствия.
   * @retval Нет
   */
-void Display_Intro(uint8_t Time)
+void Display_Intro(uint32_t Time)
 {
     disp1color_Wake();
     // Приветствие
