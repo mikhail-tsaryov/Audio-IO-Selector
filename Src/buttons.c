@@ -22,7 +22,7 @@ void ShortPressPowerButton_Handler(void)
         // Приветствие
         disp1color_FillScreenbuff(0);
         //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
- 
+
         #ifndef RUS_LANG
         disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
         disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");

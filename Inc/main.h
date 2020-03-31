@@ -47,8 +47,8 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define RUS_LANG
 #define INFO_OUTPUT
+#define RUS_LANG
 //#define USB_INFO_OUTPUT
 
 /* USER CODE END EM */
