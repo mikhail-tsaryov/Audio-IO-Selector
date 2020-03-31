@@ -1,7 +1,7 @@
-п»ї#include "info_output.h"
+#include "info_output.h"
 #include "usbd_cdc_if.h"
 
-// Р‘СѓС„РµСЂ СЃС‚СЂРѕРєРё РґР»СЏ РїРѕРґРіРѕС‚РѕРІРєРё Рє РІС‹РІРѕРґСѓ РїРѕ UART
+// Буфер строки для подготовки к выводу по UART
 char UART_BufSrting[32];
 
 void SerialInfoOutput_PrintWelcomeInfo(void)

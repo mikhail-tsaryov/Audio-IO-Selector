@@ -1,11 +1,11 @@
-п»ї#include <string.h>
+#include <string.h>
 #include "ext_flash.h"
 #include "spi.h"
 #include "usart.h"
 #include "info_output.h"
 
 /**
-  * @brief Р¤СѓРЅРєС†РёСЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёРё
+  * @brief Функция инициализации
   * @retval 
   */
 void ExternalFlash_Init(void)
@@ -15,8 +15,8 @@ void ExternalFlash_Init(void)
 }
 
 /**
-  * @brief Р¤СѓРЅРєС†РёСЏ С‡РёС‚Р°РµС‚ ManufacturerвЂ™s ID Рё Device ID
-  * @retval РЎС‚Р°СЂС€РёР№ Р±Р°Р№С‚ - ManufacturerвЂ™s ID, РґРІР° РјР»Р°РґС€РёС… Р±Р°Р№С‚Р° - Device ID
+  * @brief Функция читает Manufacturer’s ID и Device ID
+  * @retval Старший байт - Manufacturer’s ID, два младших байта - Device ID
   */
 uint32_t ExternalFlash_ReadIdentification(void)
 {
@@ -39,8 +39,8 @@ uint32_t ExternalFlash_ReadIdentification(void)
 }
 
 /**
-  * @brief Р¤СѓРЅРєС†РёСЏ С‡РёС‚Р°РµС‚ Status Register
-  * @retval РЎРѕРґРµСЂР¶РёРјРѕРµ Status Register
+  * @brief Функция читает Status Register
+  * @retval Содержимое Status Register
   */
 uint8_t ExternalFlash_ReadStatusRegister(void)
 {
@@ -56,7 +56,7 @@ uint8_t ExternalFlash_ReadStatusRegister(void)
 }
 
 /**
-  * @brief Р¤СѓРЅРєС†РёСЏ СЂР°Р·СЂРµС€Р°РµС‚ Р·Р°РїРёСЃСЊ (Write-Enable)
+  * @brief Функция разрешает запись (Write-Enable)
   * @retval 
   */
 void ExternalFlash_WriteEnable(void)
@@ -68,7 +68,7 @@ void ExternalFlash_WriteEnable(void)
 }
 
 /**
-  * @brief Р¤СѓРЅРєС†РёСЏ Р·Р°РїСЂРµС‰Р°РµС‚ Р·Р°РїРёСЃСЊ Р±РёС‚ (Write-Disable)
+  * @brief Функция запрещает запись бит (Write-Disable)
   * @retval 
   */
 void ExternalFlash_WriteDisable(void)
@@ -110,7 +110,7 @@ void ExternalFlash_WriteBlock(uint32_t *pAddr)
     ExternalFlash_EraseSector(pAddr);
     while (ExternalFlash_ReadStatusRegister() & BUSY);
     
-    // Р—Р°РїРёСЃР°С‚СЊ Р±Р°Р№С‚
+    // Записать байт
     ExternalFlash_WriteEnable();
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(&hspi1, SendBuf, 4, HAL_MAX_DELAY);
@@ -122,8 +122,8 @@ void ExternalFlash_WriteBlock(uint32_t *pAddr)
 }
 
 /**
-  * @brief  Р¤СѓРЅРєС†РёСЏ СЃРѕС…СЂР°РЅСЏРµС‚ РІСЃРµ РЅР°СЃС‚СЂРѕР№РєРё РІРѕ РІРЅРµС€РЅСЋСЋ РїР°РјСЏС‚СЊ.
-  * @retval РќРµС‚
+  * @brief  Функция сохраняет все настройки во внешнюю память.
+  * @retval Нет
   */
 void SaveSettingsToFlash(uint32_t *pBaseAddr)
 {
@@ -145,8 +145,8 @@ void SaveSettingsToFlash(uint32_t *pBaseAddr)
 }
 
 /**
-  * @brief  Р¤СѓРЅРєС†РёСЏ Р·Р°РіСЂСѓР¶Р°РµС‚ РІСЃРµ РЅР°СЃС‚СЂРѕР№РєРё РёР· РІРЅРµС€РЅРµР№ РїР°РјСЏС‚Рё.
-  * @retval РќРµС‚
+  * @brief  Функция загружает все настройки из внешней памяти.
+  * @retval Нет
   */
 void LoadSettingsFromFlash(uint32_t *pBaseAddr)
 {
@@ -196,11 +196,11 @@ void ExternalFlash_WriteStatusRegister(uint8_t Value)
     uint8_t WriteBuf[2] = {WRSR, Value};
 
     ExternalFlash_WriteEnable();
-    // Р Р°Р·СЂРµС€РёС‚СЊ РёР·РјРµРЅРµРЅРёРµ Status Register
+    // Разрешить изменение Status Register
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(&hspi1, &EnableWriteSR_Cmd, 1, HAL_MAX_DELAY);
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
-    // РџРµСЂРµР·Р°РїРёСЃР°С‚СЊ Status Register
+    // Перезаписать Status Register
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
     HAL_SPI_Transmit(&hspi1, WriteBuf, 2, HAL_MAX_DELAY);
     HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
