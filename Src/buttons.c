@@ -1,15 +1,15 @@
 #include "buttons.h"
 
 /**
-  * @brief  Функция обработки короткого нажатия кнопки POWER.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё РєРѕСЂРѕС‚РєРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё POWER.
+  * @retval РќРµС‚
   */
 void ShortPressPowerButton_Handler(void)
 {
-    // Если текущий режим STANDBY, переключиться в режим NORMAL
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј STANDBY, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РІ СЂРµР¶РёРј NORMAL
     if (System_State == STANDBY)
     {
-        System_State = NORMAL; // Сменить режим работы
+        System_State = NORMAL; // РЎРјРµРЅРёС‚СЊ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹
         LoadSettingsFromFlash(&SaveStartAddr);
         
         #ifdef INFO_OUTPUT
@@ -19,55 +19,55 @@ void ShortPressPowerButton_Handler(void)
         RelaysModuleUpdate_Task = TRUE;
 
         disp1color_Wake();
-        // Приветствие
+        // РџСЂРёРІРµС‚СЃС‚РІРёРµ
         disp1color_FillScreenbuff(0);
         //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
- 
+
         #ifndef RUS_LANG
         disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
         disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
         disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c M.Tsaryov, %d.3", 0xA9, 2020);
         #else
-        // TODO: Решить проблему с неверной кодировкой. Переделать шрифты???
-        disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
-        disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
-        disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
+        // TODO: Р РµС€РёС‚СЊ РїСЂРѕР±Р»РµРјСѓ СЃ РЅРµРІРµСЂРЅРѕР№ РєРѕРґРёСЂРѕРІРєРѕР№. РџРµСЂРµРґРµР»Р°С‚СЊ С€СЂРёС„С‚С‹???
+        disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "РђСѓРґРёРѕ");
+        disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "РєРѕРјРјСѓС‚Р°С‚РѕСЂ");
+        disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c Рњ.Р¦Р°СЂС‘РІ, %d.3", 0xA9, 2020);
         #endif
         disp1color_UpdateFromBuff();
         
         HAL_Delay(WELCOME_TIME);
 
-        PowerLED_Off(); // Отключить светодиод питания
+        PowerLED_Off(); // РћС‚РєР»СЋС‡РёС‚СЊ СЃРІРµС‚РѕРґРёРѕРґ РїРёС‚Р°РЅРёСЏ
     }
-    // Если текущий режим NORMAL, переключиться в дежурный режим
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РІ РґРµР¶СѓСЂРЅС‹Р№ СЂРµР¶РёРј
     else if (System_State == NORMAL)
     {
-        System_State = STANDBY; // Сменить режим работы
-        // Погасить экран
+        System_State = STANDBY; // РЎРјРµРЅРёС‚СЊ СЂРµР¶РёРј СЂР°Р±РѕС‚С‹
+        // РџРѕРіР°СЃРёС‚СЊ СЌРєСЂР°РЅ
         disp1color_Sleep();
-        // Отключить выходы и обновить состояние релейного модуля, не сохраняя режим MUTE
+        // РћС‚РєР»СЋС‡РёС‚СЊ РІС‹С…РѕРґС‹ Рё РѕР±РЅРѕРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ, РЅРµ СЃРѕС…СЂР°РЅСЏСЏ СЂРµР¶РёРј MUTE
         AllowSaveMute_Flag = FALSE;
         Mute_State = ON;
         RelaysModuleUpdate_Task = TRUE;
-        PowerLED_On(); // Включить светодиод питания
+        PowerLED_On(); // Р’РєР»СЋС‡РёС‚СЊ СЃРІРµС‚РѕРґРёРѕРґ РїРёС‚Р°РЅРёСЏ
         #ifdef INFO_OUTPUT
             SerialInfoOutput_PrintGoodbyeInfo();
         #endif
     }
-    // Если текущий режим SETUP
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
     else if (System_State == SETUP)
     {
-        // Если сейчас 1 этап настройки, переключиться на 2 этап
+        // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 1 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РЅР° 2 СЌС‚Р°Рї
         if (SetupStage_State == SETUP_PAGE1)
         {
             SetupStage_State = SETUP_PAGE2;
         }
-        // Если сейчас 2 этап настройки, переключиться на 3 этап
+        // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 2 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РЅР° 3 СЌС‚Р°Рї
         else if (SetupStage_State == SETUP_PAGE2)
         {
             SetupStage_State = SETUP_PAGE3;
         }
-        // Если сейчас 3 этап настройки, переключиться на NORMAL
+        // Р•СЃР»Рё СЃРµР№С‡Р°СЃ 3 СЌС‚Р°Рї РЅР°СЃС‚СЂРѕР№РєРё, РїРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РЅР° NORMAL
         else if (SetupStage_State == SETUP_PAGE3)
         {
             SetupStage_State = SETUP_PAGE1;
@@ -76,24 +76,24 @@ void ShortPressPowerButton_Handler(void)
 }
 
 /**
-  * @brief  Функция обработки короткого нажатия кнопки INPUT.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё РєРѕСЂРѕС‚РєРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё INPUT.
+  * @retval РќРµС‚
   */
 void ShortPressInputButton_Handler(void)
 {
-    // Если текущий режим NORMAL
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
     if (System_State == NORMAL)
     {
-        // Сменить вход, если не включена блокировка
+        // РЎРјРµРЅРёС‚СЊ РІС…РѕРґ, РµСЃР»Рё РЅРµ РІРєР»СЋС‡РµРЅР° Р±Р»РѕРєРёСЂРѕРІРєР°
         if (Lock_State == OFF)
         {
-            // Если вход не последний, инкрементировать вход, иначе включить первый
+            // Р•СЃР»Рё РІС…РѕРґ РЅРµ РїРѕСЃР»РµРґРЅРёР№, РёРЅРєСЂРµРјРµРЅС‚РёСЂРѕРІР°С‚СЊ РІС…РѕРґ, РёРЅР°С‡Рµ РІРєР»СЋС‡РёС‚СЊ РїРµСЂРІС‹Р№
             (ActiveInput < (InputsCount_Par - 1)) ? (ActiveInput++) : (ActiveInput = 0);
-            // Обновить состояние релейного модуля
+            // РћР±РЅРѕРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ
             RelaysModuleUpdate_Task = TRUE;
         }
     }
-    // Если текущий режим SETUP
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
     else if (System_State == SETUP)
     {
         if (SetupStage_State == SETUP_PAGE1)
@@ -113,16 +113,16 @@ void ShortPressInputButton_Handler(void)
                 OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
             }
 
-            // Сбросить включенный вход на значение по умолчанию,
-            // если он не попадает в настройки количества входов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
             if (ActiveInput + 1 > InputsCount_Par)
             {
                 Mute_State = ON;
                 ActiveInput = 0;
             }
 
-            // Сбросить включенный выход на значение по умолчанию,
-            // если он не попадает в настройки количества выходов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
             if (ActiveOutput + 1 > OutputsCount_Par)
             {
                 Mute_State = ON;
@@ -143,16 +143,16 @@ void ShortPressInputButton_Handler(void)
 
             OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
 
-            // Сбросить включенный вход на значение по умолчанию,
-            // если он не попадает в настройки количества входов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
             if (ActiveInput + 1 > InputsCount_Par)
             {
                 Mute_State = ON;
                 ActiveInput = 0;
             }
 
-            // Сбросить включенный выход на значение по умолчанию,
-            // если он не попадает в настройки количества выходов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
             if (ActiveOutput + 1 > OutputsCount_Par)
             {
                 Mute_State = ON;
@@ -168,24 +168,24 @@ void ShortPressInputButton_Handler(void)
 }
 
 /**
-  * @brief  Функция обработки короткого нажатия кнопки OUTPUT.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё РєРѕСЂРѕС‚РєРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё OUTPUT.
+  * @retval РќРµС‚
   */
 void ShortPressOutputButton_Handler(void)
 {
-    // Если текущий режим NORMAL
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
     if (System_State == NORMAL)
     {
-        // Сменить выход, если не включена блокировка
+        // РЎРјРµРЅРёС‚СЊ РІС‹С…РѕРґ, РµСЃР»Рё РЅРµ РІРєР»СЋС‡РµРЅР° Р±Р»РѕРєРёСЂРѕРІРєР°
         if (Lock_State == OFF)
         {
-            // Если выход не последний, инкрементировать вход, иначе включить первый
+            // Р•СЃР»Рё РІС‹С…РѕРґ РЅРµ РїРѕСЃР»РµРґРЅРёР№, РёРЅРєСЂРµРјРµРЅС‚РёСЂРѕРІР°С‚СЊ РІС…РѕРґ, РёРЅР°С‡Рµ РІРєР»СЋС‡РёС‚СЊ РїРµСЂРІС‹Р№
             (ActiveOutput < (OutputsCount_Par - 1)) ? (ActiveOutput++) : (ActiveOutput = 0);
-            // Обновить состояние релейного модуля
+            // РћР±РЅРѕРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ СЂРµР»РµР№РЅРѕРіРѕ РјРѕРґСѓР»СЏ
             RelaysModuleUpdate_Task = TRUE;
         }
     }
-    // Если текущий режим SETUP
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
     else if (System_State == SETUP)
     {
         if (SetupStage_State == SETUP_PAGE1)
@@ -205,16 +205,16 @@ void ShortPressOutputButton_Handler(void)
                 OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
             }
 
-            // Сбросить включенный вход на значение по умолчанию,
-            // если он не попадает в настройки количества входов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
             if (ActiveInput + 1 > InputsCount_Par)
             {
                 Mute_State = ON;
                 ActiveInput = 0;
             }
 
-            // Сбросить включенный выход на значение по умолчанию,
-            // если он не попадает в настройки количества выходов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
             if (ActiveOutput + 1 > OutputsCount_Par)
             {
                 Mute_State = ON;
@@ -235,16 +235,16 @@ void ShortPressOutputButton_Handler(void)
 
             InputsCount_Par = ModulesCount_Par * RELAY_CNT - OutputsCount_Par;
 
-            // Сбросить включенный вход на значение по умолчанию,
-            // если он не попадает в настройки количества входов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС…РѕРґРѕРІ
             if (ActiveInput + 1 > InputsCount_Par)
             {
                 Mute_State = ON;
                 ActiveInput = 0;
             }
 
-            // Сбросить включенный выход на значение по умолчанию,
-            // если он не попадает в настройки количества выходов
+            // РЎР±СЂРѕСЃРёС‚СЊ РІРєР»СЋС‡РµРЅРЅС‹Р№ РІС‹С…РѕРґ РЅР° Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ,
+            // РµСЃР»Рё РѕРЅ РЅРµ РїРѕРїР°РґР°РµС‚ РІ РЅР°СЃС‚СЂРѕР№РєРё РєРѕР»РёС‡РµСЃС‚РІР° РІС‹С…РѕРґРѕРІ
             if (ActiveOutput + 1 > OutputsCount_Par)
             {
                 Mute_State = ON;
@@ -260,22 +260,22 @@ void ShortPressOutputButton_Handler(void)
 }
 
 /**
-  * @brief  Функция обработки долгого нажатия кнопки POWER.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё POWER.
+  * @retval РќРµС‚
   */
 void LongPressPowerButton_Handler(void)
 {
-    // Если текущий режим NORMAL
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
     if (System_State == NORMAL)
     {
-        // Переключиться в режим SETUP
+        // РџРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РІ СЂРµР¶РёРј SETUP
         System_State = SETUP;
         PowerLED_On();
     }
-    // Если текущий режим SETUP
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј SETUP
     else if (System_State == SETUP)
     {
-        // Переключиться в режим NORMAL
+        // РџРµСЂРµРєР»СЋС‡РёС‚СЊСЃСЏ РІ СЂРµР¶РёРј NORMAL
 
         System_State = NORMAL;
         SetupStage_State = SETUP_PAGE1;
@@ -285,144 +285,144 @@ void LongPressPowerButton_Handler(void)
 }
 
 /**
-  * @brief  Функция обработки долгого нажатия кнопки INPUT.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё INPUT.
+  * @retval РќРµС‚
   */
 void LongPressInputButton_Handler(void)
 {
-    // Если текущий режим NORMAL
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
     if (System_State == NORMAL)
     {
-        (Lock_State == ON) ? (Lock_State = OFF) : (Lock_State = ON); // Переключить режим блокировки
+        (Lock_State == ON) ? (Lock_State = OFF) : (Lock_State = ON); // РџРµСЂРµРєР»СЋС‡РёС‚СЊ СЂРµР¶РёРј Р±Р»РѕРєРёСЂРѕРІРєРё
     }
 }
 
 /**
-  * @brief  Функция обработки долгого нажатия кнопки OUTPUT.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕР±СЂР°Р±РѕС‚РєРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ РєРЅРѕРїРєРё OUTPUT.
+  * @retval РќРµС‚
   */
 void LongPressOutputButton_Handler(void)
 {
-    // Если текущий режим NORMAL
+    // Р•СЃР»Рё С‚РµРєСѓС‰РёР№ СЂРµР¶РёРј NORMAL
     if (System_State == NORMAL)
     {
-        (Mute_State == ON) ? (Mute_State = OFF) : (Mute_State = ON); // Переключить режим MUTE
+        (Mute_State == ON) ? (Mute_State = OFF) : (Mute_State = ON); // РџРµСЂРµРєР»СЋС‡РёС‚СЊ СЂРµР¶РёРј MUTE
     }
 }
 
 /**
-  * @brief  Функция опроса коротких нажатий кнопок.
-  * @retval Нет
+  * @brief  Р¤СѓРЅРєС†РёСЏ РѕРїСЂРѕСЃР° РєРѕСЂРѕС‚РєРёС… РЅР°Р¶Р°С‚РёР№ РєРЅРѕРїРѕРє.
+  * @retval РќРµС‚
   */
 void ShortButtonPresses_Pooling(void)
 {
-    // Проверить нажатие кнопки POWER
-    if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
+    // РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё POWER
+    if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_RESET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
-        CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј С‚Р°Р№РјРµСЂ РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
+        CountdownLongPress_Task = TRUE;   // РЎС‚Р°РІРёРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
         (PowerButton_State == OPEN) ? (PowerButton_State = CLOSE) : (PowerButton_State = OPEN);
     }
-    else if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_SET) // Ветка выполняется при отпускании кнопки
+    else if (HAL_GPIO_ReadPin(BTN_PWR_GPIO_Port, BTN_PWR_Pin) == GPIO_PIN_SET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РѕС‚РїСѓСЃРєР°РЅРёРё РєРЅРѕРїРєРё
     {
         if (PowerButton_State == CLOSE)
         {
-            // Зафиксировано короткое нажатие кнопки POWER
+            // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РєРѕСЂРѕС‚РєРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё POWER
             uint8_t str[] = "* Short press Power Button *\r\n";
             HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
 
-            CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
+            CountdownLongPress_Task = FALSE; // РЎРЅРёРјР°РµРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
             PowerButton_State = OPEN;
             ShortPressPowerButton_Handler();
-            SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
+            SaveSettingsToFlash(&SaveStartAddr); // РЎРѕС…СЂР°РЅСЏРµРј РґР°РЅРЅС‹Рµ
         }
     }
 
-    // Проверить нажатие кнопки INPUT
-    if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
+    // РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё INPUT
+    if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_RESET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
-        CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј С‚Р°Р№РјРµСЂ РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
+        CountdownLongPress_Task = TRUE;   // РЎС‚Р°РІРёРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
         (InputButton_State == OPEN) ? (InputButton_State = CLOSE) : (InputButton_State = OPEN);
     }
-    else if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_SET) // Ветка выполняется при отпускании кнопки
+    else if (HAL_GPIO_ReadPin(BTN_IN_GPIO_Port, BTN_IN_Pin) == GPIO_PIN_SET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РѕС‚РїСѓСЃРєР°РЅРёРё РєРЅРѕРїРєРё
     {
         if (InputButton_State == CLOSE)
         {
-            // Зафиксировано короткое нажатие кнопки INPUT
+            // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РєРѕСЂРѕС‚РєРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё INPUT
             uint8_t str[] = "* Short press Input Button *\r\n";
             HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
 
-            CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
+            CountdownLongPress_Task = FALSE; // РЎРЅРёРјР°РµРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
             InputButton_State = OPEN;
             ShortPressInputButton_Handler();
-            SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
+            SaveSettingsToFlash(&SaveStartAddr); // РЎРѕС…СЂР°РЅСЏРµРј РґР°РЅРЅС‹Рµ
         }
     }
 
-    // Проверить нажатие кнопки OUTPUT
-    if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_RESET) // Ветка выполняется при нажатии кнопки
+    // РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё OUTPUT
+    if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_RESET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РЅР°Р¶Р°С‚РёРё РєРЅРѕРїРєРё
     {
-        LongPress_Timer = LONGPRESS_TIME; // Инициализируем таймер долгого нажатия
-        CountdownLongPress_Task = TRUE;   // Ставим задачу отсчета времени долгого нажатия
+        LongPress_Timer = LONGPRESS_TIME; // РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј С‚Р°Р№РјРµСЂ РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
+        CountdownLongPress_Task = TRUE;   // РЎС‚Р°РІРёРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
         (OutputButton_State == OPEN) ? (OutputButton_State = CLOSE) : (OutputButton_State = OPEN);
     }
-    else if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_SET) // Ветка выполняется при отпускании кнопки
+    else if (HAL_GPIO_ReadPin(BTN_OUT_GPIO_Port, BTN_OUT_Pin) == GPIO_PIN_SET) // Р’РµС‚РєР° РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ РїСЂРё РѕС‚РїСѓСЃРєР°РЅРёРё РєРЅРѕРїРєРё
     {
         if (OutputButton_State == CLOSE)
         {
-            // Зафиксировано короткое нажатие кнопки OUTPUT
+            // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РєРѕСЂРѕС‚РєРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё OUTPUT
             uint8_t str[] = "* Short press Output Button *\r\n";
             HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
 
-            CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
+            CountdownLongPress_Task = FALSE; // РЎРЅРёРјР°РµРј Р·Р°РґР°С‡Сѓ РѕС‚СЃС‡РµС‚Р° РІСЂРµРјРµРЅРё РґРѕР»РіРѕРіРѕ РЅР°Р¶Р°С‚РёСЏ
             OutputButton_State = OPEN;
             ShortPressOutputButton_Handler();
-            SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
+            SaveSettingsToFlash(&SaveStartAddr); // РЎРѕС…СЂР°РЅСЏРµРј РґР°РЅРЅС‹Рµ
         }
     }
 
-    DisplayUpdate_Task = TRUE; // Ставим флаг задачи обновления дисплея
+    DisplayUpdate_Task = TRUE; // РЎС‚Р°РІРёРј С„Р»Р°Рі Р·Р°РґР°С‡Рё РѕР±РЅРѕРІР»РµРЅРёСЏ РґРёСЃРїР»РµСЏ
 }
 
 /**
-   * @brief  Функция опроса длинных нажатий кнопок.
-   * @retval Нет
+   * @brief  Р¤СѓРЅРєС†РёСЏ РѕРїСЂРѕСЃР° РґР»РёРЅРЅС‹С… РЅР°Р¶Р°С‚РёР№ РєРЅРѕРїРѕРє.
+   * @retval РќРµС‚
    */
 void LongButtonPresses_Pooling(void)
 {
     if ((PowerButton_State == CLOSE))
     {
-        // Зафиксировано длинное нажатие кнопки POWER
+        // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РґР»РёРЅРЅРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё POWER
         uint8_t str[] = "* Long press Power Button *\r\n";
         HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
 
         PowerButton_State = OPEN;
         LongPressPowerButton_Handler();
-        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
+        SaveSettingsToFlash(&SaveStartAddr); // РЎРѕС…СЂР°РЅСЏРµРј РґР°РЅРЅС‹Рµ
     }
 
     else if ((InputButton_State == CLOSE))
     {
-        // Зафиксировано длинное нажатие кнопки INPUT
+        // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РґР»РёРЅРЅРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё INPUT
         uint8_t str[] = "* Long press Input Button *\r\n";
         HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
 
         InputButton_State = OPEN;
         LongPressInputButton_Handler();
-        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
+        SaveSettingsToFlash(&SaveStartAddr); // РЎРѕС…СЂР°РЅСЏРµРј РґР°РЅРЅС‹Рµ
     }
 
     else if ((OutputButton_State == CLOSE))
     {
-        // Зафиксировано длинное нажатие кнопки OUTPUT
+        // Р—Р°С„РёРєСЃРёСЂРѕРІР°РЅРѕ РґР»РёРЅРЅРѕРµ РЅР°Р¶Р°С‚РёРµ РєРЅРѕРїРєРё OUTPUT
         uint8_t str[] = "* Long press Output Button * \r\n";
         HAL_UART_Transmit(&huart1, str, sizeof(str) - 1, 0xFFFF);
 
         OutputButton_State = OPEN;
         LongPressOutputButton_Handler();
-        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
+        SaveSettingsToFlash(&SaveStartAddr); // РЎРѕС…СЂР°РЅСЏРµРј РґР°РЅРЅС‹Рµ
     }
 
-    DisplayUpdate_Task = TRUE; // Ставим флаг задачи обновления дисплея
+    DisplayUpdate_Task = TRUE; // РЎС‚Р°РІРёРј С„Р»Р°Рі Р·Р°РґР°С‡Рё РѕР±РЅРѕРІР»РµРЅРёСЏ РґРёСЃРїР»РµСЏ
 }
