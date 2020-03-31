@@ -27,7 +27,7 @@ void RelaysModule_Update(uint8_t Input, uint8_t Output, uint8_t Mute)
     RelaysModule_Reset();
 
     // Отправить новые данные по SPI
-    HAL_SPI_Transmit(&hspi1, &Frame, ModulesCount_Par, 4);
+    HAL_SPI_Transmit(&hspi1, (uint8_t *)&Frame, ModulesCount_Par, 4);
     // Сгенерировать импульс для переноса данных между регистрами TPIC6B595
     HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(SPI_nCS_REL_GPIO_Port, SPI_nCS_REL_Pin, GPIO_PIN_SET);
