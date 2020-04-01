@@ -6,7 +6,7 @@
 #include <string.h>
 #include "disp1color.h"
 
-void Display_Intro(uint32_t);
+void Display_Intro(void);
 void Display_Update(void);
 void PowerLED_Off(void);
 void PowerLED_On(void);

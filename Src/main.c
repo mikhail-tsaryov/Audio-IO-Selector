@@ -32,8 +32,10 @@
 #include <string.h>
 #include "usbd_cdc_if.h"
 #include "buttons.h"
+#include "display.h"
 #include "ext_flash.h"
 #include "info_output.h"
+#include "relays.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,11 +70,13 @@ volatile uint8_t ScanButtonsLong_Task = FALSE;
 volatile uint8_t RelaysUpdate_Task = FALSE;
 volatile uint8_t RelaysModuleUpdate_Task = FALSE;
 volatile uint8_t DisplayUpdate_Task = FALSE;
+volatile uint8_t DisplayWelcome_Task = FALSE;
 // Дополнительные флаги
 volatile uint8_t AllowSaveMute_Flag = FALSE; // Флаг разрешения сохранения состояния MUTE
 // Таймеры обработки нажатий кнопок
 volatile uint16_t DeBouncer_Timer = DEBOUCE_TIME;
 volatile uint16_t LongPress_Timer = LONGPRESS_TIME;
+volatile uint16_t DisplayWelcome_Timer = WELCOME_TIME;
 // Переменные состояния системы
 uint8_t System_State = STANDBY; // Текущий режим работы устройства
 uint8_t SetupStage_State = 0; // Текущий этап режима настройки
@@ -138,10 +142,6 @@ int main(void)
 
   ExternalFlash_Init();
 
-  #ifdef INFO_OUTPUT
-    SerialInfoOutput_PrintWelcomeInfo();
-  #endif
-
     // OLED Init
     disp1color_Init();
     disp1color_SetBrightness(255);
@@ -157,6 +157,7 @@ int main(void)
     while (1)
     {
         Tasks_Pooling();
+        
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -229,7 +230,7 @@ void Tasks_Pooling(void)
     if (RelaysUpdate_Task == TRUE)
     {
         RelaysUpdate_Task = FALSE;
-        RelaysModule_Update(ActiveInput, ActiveOutput, Mute_State);
+        RelaysModule_Update();
     }
 
     // Если есть задача обновления дисплея

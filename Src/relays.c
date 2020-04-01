@@ -5,7 +5,7 @@
   * @brief  Функция формирования и отправки данных на релейный модуль.
   * @retval Нет
   */
-void RelaysModule_Update(uint8_t Input, uint8_t Output, uint8_t Mute)
+void RelaysModule_Update(void)
 {
     uint32_t Frame = 0;
 
@@ -13,14 +13,14 @@ void RelaysModule_Update(uint8_t Input, uint8_t Output, uint8_t Mute)
     // Если настроен порядок "входы/выходы"
     if (InOutOrder_Par == IN_OUT)
     {
-        Frame = ((1 << (Input + OutputsCount_Par)) | (1 << Output)) * ((!Mute) & 1);
+        Frame = ((1 << (ActiveInput + OutputsCount_Par)) | (1 << ActiveOutput)) * ((!Mute_State) & 1);
         // Переменная mute инвертируется и перемножается с маской, чтобы выделить младший бит
         // Тем самым при активном MUTE Frame станет равным нулю
     }
     // Если настроен порядок "выходы/входы"
     else if (InOutOrder_Par == OUT_IN)
     {
-        Frame = ((1 << (Output + InputsCount_Par)) | (1 << Input)) * ((!Mute) & 1);
+        Frame = ((1 << (ActiveOutput + InputsCount_Par)) | (1 << ActiveInput)) * ((!Mute_State) & 1);
     }
 
     // Сбросить релейный модуль

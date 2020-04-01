@@ -71,12 +71,14 @@ extern volatile uint8_t ScanButtonsLong_Task;
 extern volatile uint8_t RelaysUpdate_Task;
 extern volatile uint8_t RelaysModuleUpdate_Task;
 extern volatile uint8_t DisplayUpdate_Task;
+extern volatile uint8_t DisplayWelcome_Task;
 // Дополнительные флаги
 extern volatile uint8_t AllowSaveMute_Flag; // Флаг разрешения сохранения состояния MUTE
 // Таймеры
 extern volatile uint16_t DeBouncer_Timer;
 extern volatile uint16_t LongPress_Timer;
 extern volatile uint16_t DisplayUpdate_Timer;
+extern volatile uint16_t DisplayWelcome_Timer;
 // Переменные состояния
 extern uint8_t System_State; // Текущий режим работы устройства
 extern uint8_t SetupStage_State;   // Текущий этап режима настройки
@@ -94,13 +96,6 @@ extern uint8_t MuteButton_State;   // Переменная состояния кнопки MUTE (долгое н
 extern uint32_t SaveStartAddr; // Начальный адрес сохранения настроек
 extern uint8_t FlashPageBuffer[256];
 
-extern void PowerLED_On(void);
-extern void PowerLED_Off(void);
-extern void RelaysModule_Update(uint8_t, uint8_t, uint8_t);
-extern void RelaysModule_Reset(void);
-extern void Display_Update(void);
-extern void SaveSettingsToFlash(uint32_t *);
-extern void LoadSettingsFromFlash(uint32_t *);
 extern void Tasks_Pooling(void);
 
 /* USER CODE END EFP */

@@ -11,58 +11,78 @@ void Display_Update(void)
     // Если текущий режим NORMAL
     if (System_State == NORMAL)
     {
-        disp1color_DrawRectangle(0, 18, 40, 47);
-        disp1color_printf(3, 2, FONTID_10X16F, "%c%c%c", 0x1E, 0x1E, 0x1E);
-        disp1color_printf(3, 48, FONTID_10X16F, "%c%c%c", 0x1C, 0x1C, 0x1C);
-        disp1color_printfCenterAlign(5, 24, FONTID_10X16F, "%d", ActiveInput + 1);
-        disp1color_printfCenterAlign(45, 24, FONTID_10X16F, "%d", ActiveOutput + 1);
-#ifndef RUS_LANG
-        disp1color_printfCenterAlign(24, 3, FONTID_6X8M, "DAC Mercury");
-        disp1color_printfCenterAlign(24, 54, FONTID_6X8M, "AMP Neptune");
-#else
-        disp1color_printfCenterAlign(24, 3, FONTID_6X8M, "DAC Mercury");
-        disp1color_printfCenterAlign(24, 54, FONTID_6X8M, "AMP Neptune");
-#endif
-
-        if (Lock_State == ON)
+        // Если текущий режим NORMAL и выполняется показ заставки
+        if (DisplayWelcome_Task == TRUE)
         {
-            disp1color_printf(16, 24, FONTID_10X16F, "%c", 0x1F); // Значок блокировки
+            // Рамка
+            //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
+            #ifndef RUS_LANG
+                disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
+                disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
+                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c M.Tsaryov, %d.3", 0xA9, 2020);
+            #else
+                // TODO: Решить проблему с неверной кодировкой. Переделать шрифты???
+                disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
+                disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
+                disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
+            #endif
+                //disp1color_UpdateFromBuff();
         }
-
-        if (Mute_State == OFF)
+        else
         {
-            // Стрелка
-            disp1color_DrawLine(83, 31, 93, 31);
-            disp1color_DrawLine(83, 32, 93, 32);
-            disp1color_DrawLine(89, 27, 93, 31);
-            disp1color_DrawLine(89, 28, 93, 32);
-            disp1color_DrawLine(89, 35, 93, 31);
-            disp1color_DrawLine(89, 36, 93, 32);
+            disp1color_DrawRectangle(0, 18, 40, 47);
+            disp1color_printf(3, 2, FONTID_10X16F, "%c%c%c", 0x1E, 0x1E, 0x1E);
+            disp1color_printf(3, 48, FONTID_10X16F, "%c%c%c", 0x1C, 0x1C, 0x1C);
+            disp1color_printfCenterAlign(5, 24, FONTID_10X16F, "%d", ActiveInput + 1);
+            disp1color_printfCenterAlign(45, 24, FONTID_10X16F, "%d", ActiveOutput + 1);
+            #ifndef RUS_LANG
+                disp1color_printfCenterAlign(24, 3, FONTID_6X8M, "DAC Mercury");
+                disp1color_printfCenterAlign(24, 54, FONTID_6X8M, "AMP Neptune");
+            #else
+                disp1color_printfCenterAlign(24, 3, FONTID_6X8M, "DAC Mercury");
+                disp1color_printfCenterAlign(24, 54, FONTID_6X8M, "AMP Neptune");
+            #endif
+
+            if (Lock_State == ON)
+            {
+                disp1color_printf(16, 24, FONTID_10X16F, "%c", 0x1F); // Значок блокировки
+            }
+
+            if (Mute_State == OFF)
+            {
+                // Стрелка
+                disp1color_DrawLine(83, 31, 93, 31);
+                disp1color_DrawLine(83, 32, 93, 32);
+                disp1color_DrawLine(89, 27, 93, 31);
+                disp1color_DrawLine(89, 28, 93, 32);
+                disp1color_DrawLine(89, 35, 93, 31);
+                disp1color_DrawLine(89, 36, 93, 32);
+            }
         }
+        
     }
 
     // Если текущий режим SETUP
     else if (System_State == SETUP)
     {
-// Заголовок
-#ifndef RUS_LANG
-        disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "Settings");
-#else
-        disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "Настройки");
-#endif
-        disp1color_DrawRectangleFilled(0, 20, DISP1COLOR_Width - 1, 20);
+        // Заголовок
+        #ifndef RUS_LANG
+            disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "Settings");
+        #else
+            disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "Настройки");
+        #endif
+            disp1color_DrawRectangleFilled(0, 20, DISP1COLOR_Width - 1, 20);
 
         // Если сейчас 1 этап настройки,
         if (SetupStage_State == SETUP_PAGE1)
         {
             // Количество установленных релейный модулей
-
-#ifndef RUS_LANG
-            disp1color_printf(5, 27, FONTID_10X16F, "Relay\r\nmodules");
-#else
-            disp1color_printf(5, 27, FONTID_10X16F, "Релейных\r\nмодулей");
-#endif
-            disp1color_printf(100, 36, FONTID_10X16F, "%d", ModulesCount_Par);
+            #ifndef RUS_LANG
+                    disp1color_printf(5, 27, FONTID_10X16F, "Relay\r\nmodules");
+            #else
+                    disp1color_printf(5, 27, FONTID_10X16F, "Релейных\r\nмодулей");
+            #endif
+                    disp1color_printf(100, 36, FONTID_10X16F, "%d", ModulesCount_Par);
         }
 
         // Если сейчас 2 этап настройки,
@@ -130,26 +150,9 @@ void Display_Update(void)
   * @brief  Функция вывода на дисплей приветствия.
   * @retval Нет
   */
-void Display_Intro(uint32_t Time)
+void Display_Intro(void)
 {
-    disp1color_Wake();
-    // Приветствие
-    disp1color_FillScreenbuff(0);
-    //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
 
-#ifndef RUS_LANG
-    disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
-    disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
-    disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c M.Tsaryov, %d.3", 0xA9, 2020);
-#else
-    // TODO: Решить проблему с неверной кодировкой. Переделать шрифты???
-    disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Аудио");
-    disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
-    disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
-#endif
-    disp1color_UpdateFromBuff();
-
-    HAL_Delay(Time);
 }
 
 /**

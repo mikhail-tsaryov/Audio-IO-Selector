@@ -206,8 +206,20 @@ void SysTick_Handler(void)
       if (LongPress_Timer == 0)                 // Если досчитали до конца,
       {
           CountdownLongPress_Task = FALSE;      // снимаем задачу,
-          LongPress_Timer = LONGPRESS_TIME;     // ??нициализируем таймер долгого нажатия
+          LongPress_Timer = LONGPRESS_TIME;     // инициализируем таймер долгого нажатия
           ScanButtonsLong_Task = TRUE;          // и ставим флаг задачи сканирования кнопок
+      }
+  }
+
+  // Обработка таймера заставки
+  if (DisplayWelcome_Task == TRUE) // Если был флаг задачи показа заставки
+  {
+      DisplayWelcome_Timer--;        // Уменьшить таймер
+      if (DisplayWelcome_Timer == 0) // Если досчитали до конца,
+      {
+          DisplayWelcome_Task = FALSE;           // снимаем задачу,
+          DisplayWelcome_Timer = WELCOME_TIME;   // заново инициализируем таймер заставки
+          DisplayUpdate_Task = TRUE;             // и ставим флаг задачи обновления дисплея
       }
   }
 

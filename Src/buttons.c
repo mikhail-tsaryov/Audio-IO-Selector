@@ -9,16 +9,21 @@ void ShortPressPowerButton_Handler(void)
     // Если текущий режим STANDBY, переключиться в режим NORMAL
     if (System_State == STANDBY)
     {
-        System_State = NORMAL; // Сменить режим работы
+        System_State = NORMAL;                 // меняем режим работы
+
+        #ifdef INFO_OUTPUT
+            SerialInfoOutput_PrintWelcomeInfo();
+        #endif
         LoadSettingsFromFlash(&SaveStartAddr);
-        
         #ifdef INFO_OUTPUT
             SerialInfoOutput_PrintLoadedParameters();
         #endif
         AllowSaveMute_Flag = TRUE;
         RelaysModuleUpdate_Task = TRUE;
 
-        Display_Intro(WELCOME_TIME);
+        DisplayWelcome_Task = TRUE;
+        disp1color_Wake();
+        //Display_Intro(WELCOME_TIME);
 
         PowerLED_Off(); // Отключить светодиод питания
     }
@@ -90,11 +95,11 @@ void ShortPressInputButton_Handler(void)
                 ModulesCount_Par = 1;
             }
 
-            if ((InputsCount_Par > ModulesCount_Par * RELAY_CNT / 2) | (OutputsCount_Par > ModulesCount_Par * RELAY_CNT - InputsCount_Par))
+            if (InputsCount_Par > ModulesCount_Par * RELAY_CNT / 2)
             {
                 InputsCount_Par = ModulesCount_Par * RELAY_CNT / 2;
-                OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
             }
+            OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
 
             // Сбросить включенный вход на значение по умолчанию,
             // если он не попадает в настройки количества входов
@@ -182,11 +187,11 @@ void ShortPressOutputButton_Handler(void)
                 ModulesCount_Par = MAX_MODULES;
             }
 
-            if ((InputsCount_Par > ModulesCount_Par * RELAY_CNT / 2) | (OutputsCount_Par > ModulesCount_Par * RELAY_CNT - InputsCount_Par))
+            if (InputsCount_Par > ModulesCount_Par * RELAY_CNT / 2)
             {
                 InputsCount_Par = ModulesCount_Par * RELAY_CNT / 2;
-                OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
             }
+            OutputsCount_Par = ModulesCount_Par * RELAY_CNT - InputsCount_Par;
 
             // Сбросить включенный вход на значение по умолчанию,
             // если он не попадает в настройки количества входов

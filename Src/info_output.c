@@ -6,10 +6,6 @@ char UART_BufSrting[32];
 
 void SerialInfoOutput_PrintWelcomeInfo(void)
 {
-    uint32_t TempBuf = ExternalFlash_ReadIdentification();
-    uint8_t ManufacturerID = TempBuf >> 16;
-    uint16_t DeviceID = TempBuf;
-
     sprintf(UART_BufSrting, "----------------------------\r\n");
 #ifdef USB_INFO_OUTPUT
     CDC_Transmit_FS((uint8_t *)UART_BufSrting, strlen(UART_BufSrting));
@@ -34,6 +30,11 @@ void SerialInfoOutput_PrintWelcomeInfo(void)
 #else
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
 #endif
+/*
+    uint32_t TempBuf = ExternalFlash_ReadIdentification();
+    uint8_t ManufacturerID = TempBuf >> 16;
+    uint16_t DeviceID = TempBuf;
+    
     sprintf(UART_BufSrting, "Manufacturer ID: 0x%X\r\n", ManufacturerID);
 #ifdef USB_INFO_OUTPUT
     CDC_Transmit_FS((uint8_t *)UART_BufSrting, strlen(UART_BufSrting));
@@ -52,6 +53,7 @@ void SerialInfoOutput_PrintWelcomeInfo(void)
 #else
     HAL_UART_Transmit(&huart1, (uint8_t *)UART_BufSrting, strlen(UART_BufSrting), HAL_MAX_DELAY);
 #endif
+*/
     sprintf(UART_BufSrting, "----------------------------\r\n");
 #ifdef USB_INFO_OUTPUT
     CDC_Transmit_FS((uint8_t *)UART_BufSrting, strlen(UART_BufSrting));
