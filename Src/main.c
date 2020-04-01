@@ -56,13 +56,16 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// Настраиваемые параметры
-uint8_t ModulesCount_Par = 1; // Количество релейных модулей
-uint8_t InputsCount_Par = 4; // Количество входов в модуле
-uint8_t OutputsCount_Par = 4; // Количество выходов в модуле
-uint8_t InOutOrder_Par = OUT_IN;  // Параметр, отвечающий за порядок расположения на разъемах - входы/выходы или выходы/входы
-// uint8_t IODisplayMode_Par = NUMBERS; // Параметр отображения входов/выходов (цифрами или именами)
-// Флаги задач
+// Saved and customizable values
+uint8_t ModulesCount_Par = 1;
+uint8_t InputsCount_Par = 4; 
+uint8_t OutputsCount_Par = 4;
+uint8_t InOutOrder_Par = OUT_IN; 
+// Save HW options
+uint32_t SaveStartAddr = 0x000000; 
+uint8_t FlashPageBuffer[256] = {0}; 
+
+// Task flags
 volatile uint8_t DeBouncer_Task = FALSE;
 volatile uint8_t CountdownLongPress_Task = FALSE;
 volatile uint8_t ScanButtonsShort_Task = FALSE;
@@ -71,28 +74,28 @@ volatile uint8_t RelaysUpdate_Task = FALSE;
 volatile uint8_t RelaysModuleUpdate_Task = FALSE;
 volatile uint8_t DisplayUpdate_Task = FALSE;
 volatile uint8_t DisplayWelcome_Task = FALSE;
-// Дополнительные флаги
-volatile uint8_t AllowSaveMute_Flag = FALSE; // Флаг разрешения сохранения состояния MUTE
-// Таймеры обработки нажатий кнопок
+// Additional flags
+volatile uint8_t AllowSaveMute_Flag = FALSE;
+
+// Software timers
 volatile uint16_t DeBouncer_Timer = DEBOUCE_TIME;
 volatile uint16_t LongPress_Timer = LONGPRESS_TIME;
 volatile uint16_t DisplayWelcome_Timer = WELCOME_TIME;
-// Переменные состояния системы
-uint8_t System_State = STANDBY; // Текущий режим работы устройства
-uint8_t SetupStage_State = 0; // Текущий этап режима настройки
-uint8_t Mute_State = FALSE; // Переменная состояния режима MUTE
-uint8_t Lock_State = FALSE; // переменная состояния блокировки изменения входов и выходов
-uint8_t ActiveInput = 0;  // Текущий вход
-uint8_t ActiveOutput = 0; // Текущий выход
-// Состояния кнопок
-uint8_t PowerButton_State = OPEN; // Переменная состояния кнопки POWER
-uint8_t InputButton_State = OPEN; // Переменная состояния кнопки INPUT
-uint8_t OutputButton_State = OPEN; // Переменная состояния кнопки OUTPUT
-uint8_t LockButton_State = OPEN; // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
-uint8_t MuteButton_State = OPEN; // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
 
-uint32_t SaveStartAddr = 0x000000; // Начальный адрес сохранения настроек
-uint8_t FlashPageBuffer[256] = {0}; // Буфер чтения Flash
+// State variables
+uint8_t System_State = STANDBY; 
+uint8_t SetupStage_State = SETUP_PAGE1; 
+uint8_t Mute_State = FALSE; 
+uint8_t Lock_State = FALSE; 
+uint8_t ActiveInput = 0;  
+uint8_t ActiveOutput = 0; 
+
+// Buttons states
+uint8_t PowerButton_State = OPEN; 
+uint8_t InputButton_State = OPEN; 
+uint8_t OutputButton_State = OPEN; 
+uint8_t LockButton_State = OPEN;   // Virtual button - long press INPUT
+uint8_t MuteButton_State = OPEN;   // Virtual button - long press OUTPUT
 
 /* USER CODE END PV */
 

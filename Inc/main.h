@@ -47,6 +47,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+
 #define INFO_OUTPUT
 #define RUS_LANG
 //#define USB_INFO_OUTPUT
@@ -57,13 +58,16 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-// Параметры
-extern uint8_t ModulesCount_Par;        // Количество релейных модулей
-extern uint8_t InputsCount_Par;         // Количество входов в модуле
-extern uint8_t OutputsCount_Par;        // Количество выходов в модуле
-extern uint8_t InOutOrder_Par;     // Параметр, отвечающий за порядок расположения на разъемах - входы/выходы или выходы/входы
-extern uint8_t IODisplayMode_Par; // Параметр отображения входов/выходов (цифрами или именами)
-// Флаги задач
+// Saved and customizable values
+extern uint8_t ModulesCount_Par;
+extern uint8_t InputsCount_Par;
+extern uint8_t OutputsCount_Par;
+extern uint8_t InOutOrder_Par; 
+// Save HW options
+extern uint32_t SaveStartAddr;
+extern uint8_t FlashPageBuffer[256];
+
+// Task flags
 extern volatile uint8_t CountdownLongPress_Task;
 extern volatile uint8_t DeBouncer_Task;
 extern volatile uint8_t ScanButtonsShort_Task;
@@ -72,29 +76,29 @@ extern volatile uint8_t RelaysUpdate_Task;
 extern volatile uint8_t RelaysModuleUpdate_Task;
 extern volatile uint8_t DisplayUpdate_Task;
 extern volatile uint8_t DisplayWelcome_Task;
-// Дополнительные флаги
-extern volatile uint8_t AllowSaveMute_Flag; // Флаг разрешения сохранения состояния MUTE
-// Таймеры
+// Additional flags
+extern volatile uint8_t AllowSaveMute_Flag;
+
+// Software timers
 extern volatile uint16_t DeBouncer_Timer;
 extern volatile uint16_t LongPress_Timer;
 extern volatile uint16_t DisplayUpdate_Timer;
 extern volatile uint16_t DisplayWelcome_Timer;
-// Переменные состояния
-extern uint8_t System_State; // Текущий режим работы устройства
-extern uint8_t SetupStage_State;   // Текущий этап режима настройки
-extern uint8_t Mute_State;     // Переменная состояния режима MUTE
-extern uint8_t Lock_State;     // переменная состояния блокировки изменения входов и выходов
-extern uint8_t ActiveInput;        // Текущий вход
-extern uint8_t ActiveOutput;       // Текущий выход
-// Состояния кнопок
-extern uint8_t PowerButton_State; // Переменная состояния кнопки POWER
-extern uint8_t InputButton_State; // Переменная состояния кнопки INPUT
-extern uint8_t OutputButton_State; // Переменная состояния кнопки OUTPUT
-extern uint8_t LockButton_State;   // Переменная состояния кнопки LOCK (долгое нажатие INPUT)
-extern uint8_t MuteButton_State;   // Переменная состояния кнопки MUTE (долгое нажатие OUTPUT)
 
-extern uint32_t SaveStartAddr; // Начальный адрес сохранения настроек
-extern uint8_t FlashPageBuffer[256];
+// State variables
+extern uint8_t System_State; 
+extern uint8_t SetupStage_State;  
+extern uint8_t Mute_State;
+extern uint8_t Lock_State;
+extern uint8_t ActiveInput;
+extern uint8_t ActiveOutput;
+
+// Buttons states
+extern uint8_t PowerButton_State; 
+extern uint8_t InputButton_State; 
+extern uint8_t OutputButton_State;
+extern uint8_t LockButton_State; // Virtual button - long press Input
+extern uint8_t MuteButton_State; // Virtual button - long press Output
 
 extern void Tasks_Pooling(void);
 
@@ -136,49 +140,45 @@ extern void Tasks_Pooling(void);
 #define SPI_nCS_FLASH_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
+// Hardware parameters
+#define MAX_MODULES 4 // Maximum number of relay modules
+#define RELAY_CNT 8   // Number of relays on one module
 
+// Time parameters
+#define DEBOUCE_TIME 30U    // Debouncer time
+#define LONGPRESS_TIME 800U // Button long press time
+#define WELCOME_TIME 3000U  // Welcome screen time
+
+// Buttons states
+#define OPEN 0 
+#define CLOSE 1
+
+// Task states
 #define FALSE 0
 #define TRUE 1
 
 #define OFF 0
 #define ON 1
 
-//  
-#define OPEN 0 // 
-#define CLOSE 1 // 
+// System states
+#define NORMAL 0 
+#define SETUP 1
+#define STANDBY 2
+#define EMERGENCY 3
 
-//   
-#define NORMAL 0 // 
-#define SETUP 1 // 
-#define STANDBY 2 // 
-#define EMERGENCY 3 // 
-//  
-#define SETUP_PAGE1 0 //  1
-#define SETUP_PAGE2 1 //  2
-#define SETUP_PAGE3 2 //  3
-#define SETUP_PAGE4 3 //  4
+// Setup mode pages
+#define SETUP_PAGE1 0 // Setup number relay modules
+#define SETUP_PAGE2 1 // Setup I/Os number
+#define SETUP_PAGE3 2 // Setup I/O order
+#define SETUP_PAGE4 3 // 
 
-//  
+// Display color
 #define BLACK 0 // Black color, no pixel
 #define WHITE 1 // Pixel is set. Color depends on OLED
 
-//     
-#define IN_OUT 0 // /
-#define OUT_IN 1 // /
-/*
-//    /
-#define NUMBERS 0 //   
-#define NAMES 1 //  
-*/
-//  ()  
-#define MAX_MODULES 4 //   
-#define RELAY_CNT 8   //     
-
-//  
-#define DEBOUCE_TIME 30U    //    
-#define LONGPRESS_TIME 800U //    
-//#define DISPLAYUPDATE_TIME 30U //
-#define WELCOME_TIME 3000U //   
+// I/O order variants
+#define IN_OUT 0 // Inputs/outputs
+#define OUT_IN 1 // Outputs/inputs
 
     /* USER CODE END Private defines */
 
