@@ -137,11 +137,6 @@ void SaveSettingsToFlash(uint32_t *pBaseAddr)
 
     while (ExternalFlash_ReadStatusRegister() & BUSY);
     ExternalFlash_WriteBlock(pBaseAddr);
-    //while (ExternalFlash_ReadStatusRegister() & BUSY);
-
-    #ifdef INFO_OUTPUT
-        SerialInfoOutput_PrintSavedParameters(pBaseAddr);
-    #endif
 }
 
 /**
@@ -187,23 +182,4 @@ void LoadSettingsFromFlash(uint32_t *pBaseAddr)
     {
         Mute_State = FlashPageBuffer[3];
     }
-}
-
-void ExternalFlash_WriteStatusRegister(uint8_t Value)
-{
-    /*
-    uint8_t EnableWriteSR_Cmd = EWSR;
-    uint8_t WriteBuf[2] = {WRSR, Value};
-
-    ExternalFlash_WriteEnable();
-    // Разрешить изменение Status Register
-    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi1, &EnableWriteSR_Cmd, 1, HAL_MAX_DELAY);
-    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
-    // Перезаписать Status Register
-    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_RESET);
-    HAL_SPI_Transmit(&hspi1, WriteBuf, 2, HAL_MAX_DELAY);
-    HAL_GPIO_WritePin(SPI_nCS_FLASH_GPIO_Port, SPI_nCS_FLASH_Pin, GPIO_PIN_SET);
-    ExternalFlash_WriteDisable();
-    */
 }

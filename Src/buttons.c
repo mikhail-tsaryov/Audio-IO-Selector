@@ -11,13 +11,7 @@ void ShortPressPowerButton_Handler(void)
     {
         System_State = NORMAL;                 // меняем режим работы
 
-        #ifdef INFO_OUTPUT
-            SerialInfoOutput_PrintWelcomeInfo();
-        #endif
         LoadSettingsFromFlash(&SaveStartAddr);
-        #ifdef INFO_OUTPUT
-            SerialInfoOutput_PrintLoadedParameters();
-        #endif
         AllowSaveMute_Flag = TRUE;
         RelaysModuleUpdate_Task = TRUE;
 
@@ -38,9 +32,6 @@ void ShortPressPowerButton_Handler(void)
         Mute_State = ON;
         RelaysModuleUpdate_Task = TRUE;
         PowerLED_On(); // Включить светодиод питания
-        #ifdef INFO_OUTPUT
-            SerialInfoOutput_PrintGoodbyeInfo();
-        #endif
     }
     // Если текущий режим SETUP
     else if (System_State == SETUP)
@@ -264,7 +255,6 @@ void LongPressPowerButton_Handler(void)
     else if (System_State == SETUP)
     {
         // Переключиться в режим NORMAL
-
         System_State = NORMAL;
         SetupStage_State = SETUP_PAGE1;
         AllowSaveMute_Flag = TRUE;
@@ -316,9 +306,6 @@ void ShortButtonPresses_Pooling(void)
         if (PowerButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки POWER
-            uint8_t str[] = "* Short press Power Button *\r\n";
-            HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
-
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             PowerButton_State = OPEN;
             ShortPressPowerButton_Handler();
@@ -338,9 +325,6 @@ void ShortButtonPresses_Pooling(void)
         if (InputButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки INPUT
-            uint8_t str[] = "* Short press Input Button *\r\n";
-            HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
-
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             InputButton_State = OPEN;
             ShortPressInputButton_Handler();
@@ -360,9 +344,6 @@ void ShortButtonPresses_Pooling(void)
         if (OutputButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки OUTPUT
-            uint8_t str[] = "* Short press Output Button *\r\n";
-            HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
-
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             OutputButton_State = OPEN;
             ShortPressOutputButton_Handler();
@@ -382,35 +363,24 @@ void LongButtonPresses_Pooling(void)
     if ((PowerButton_State == CLOSE))
     {
         // Зафиксировано длинное нажатие кнопки POWER
-        uint8_t str[] = "* Long press Power Button *\r\n";
-        HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
-
         PowerButton_State = OPEN;
         LongPressPowerButton_Handler();
-        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
     }
 
     else if ((InputButton_State == CLOSE))
     {
         // Зафиксировано длинное нажатие кнопки INPUT
-        uint8_t str[] = "* Long press Input Button *\r\n";
-        HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
-
         InputButton_State = OPEN;
         LongPressInputButton_Handler();
-        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
     }
 
     else if ((OutputButton_State == CLOSE))
     {
         // Зафиксировано длинное нажатие кнопки OUTPUT
-        uint8_t str[] = "* Long press Output Button * \r\n";
-        HAL_UART_Transmit_IT(&huart1, str, sizeof(str) - 1);
-
         OutputButton_State = OPEN;
         LongPressOutputButton_Handler();
-        SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
     }
 
+    SaveSettingsToFlash(&SaveStartAddr); // Сохраняем данные
     DisplayUpdate_Task = TRUE; // Ставим флаг задачи обновления дисплея
 }

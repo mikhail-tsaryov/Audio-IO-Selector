@@ -14,8 +14,7 @@ void Display_Update(void)
         // Если текущий режим NORMAL и выполняется показ заставки
         if (DisplayWelcome_Task == TRUE)
         {
-            // Рамка
-            //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1);
+            //disp1color_DrawRectangle(0, 0, DISP1COLOR_Width - 1, DISP1COLOR_Height - 1); // Рамка
             #ifndef RUS_LANG
                 disp1color_printfCenterAlign(0, 8, FONTID_10X16F, "Audio");
                 disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "I/O Selector");
@@ -26,7 +25,6 @@ void Display_Update(void)
                 disp1color_printfCenterAlign(0, 24, FONTID_10X16F, "коммутатор");
                 disp1color_printfCenterAlign(0, 50, FONTID_6X8M, "%c М.Царёв, %d.3", 0xA9, 2020);
             #endif
-                //disp1color_UpdateFromBuff();
         }
         else
         {
@@ -35,6 +33,7 @@ void Display_Update(void)
             disp1color_printf(3, 48, FONTID_10X16F, "%c%c%c", 0x1C, 0x1C, 0x1C);
             disp1color_printfCenterAlign(5, 24, FONTID_10X16F, "%d", ActiveInput + 1);
             disp1color_printfCenterAlign(45, 24, FONTID_10X16F, "%d", ActiveOutput + 1);
+            
             #ifndef RUS_LANG
                 disp1color_printfCenterAlign(24, 3, FONTID_6X8M, "DAC Mercury");
                 disp1color_printfCenterAlign(24, 54, FONTID_6X8M, "AMP Neptune");
@@ -50,16 +49,9 @@ void Display_Update(void)
 
             if (Mute_State == OFF)
             {
-                // Стрелка
-                disp1color_DrawLine(83, 31, 93, 31);
-                disp1color_DrawLine(83, 32, 93, 32);
-                disp1color_DrawLine(89, 27, 93, 31);
-                disp1color_DrawLine(89, 28, 93, 32);
-                disp1color_DrawLine(89, 35, 93, 31);
-                disp1color_DrawLine(89, 36, 93, 32);
+                disp1color_DrawArrow(88, 31); // Стрелка
             }
-        }
-        
+        }      
     }
 
     // Если текущий режим SETUP
@@ -71,7 +63,7 @@ void Display_Update(void)
         #else
             disp1color_printfCenterAlign(0, 2, FONTID_10X16F, "Настройки");
         #endif
-            disp1color_DrawRectangleFilled(0, 20, DISP1COLOR_Width - 1, 20);
+        disp1color_DrawRectangleFilled(0, 20, DISP1COLOR_Width - 1, 20);
 
         // Если сейчас 1 этап настройки,
         if (SetupStage_State == SETUP_PAGE1)
@@ -82,30 +74,30 @@ void Display_Update(void)
             #else
                     disp1color_printf(5, 27, FONTID_10X16F, "Релейных\r\nмодулей");
             #endif
-                    disp1color_printf(100, 36, FONTID_10X16F, "%d", ModulesCount_Par);
+            disp1color_printf(100, 36, FONTID_10X16F, "%d", ModulesCount_Par);
         }
 
         // Если сейчас 2 этап настройки,
         else if (SetupStage_State == SETUP_PAGE2)
         {
-// Количество входов и выходов
-#ifndef RUS_LANG
-            disp1color_printf(5, 27, FONTID_10X16F, "Inputs\r\nOutputs");
-#else
-            disp1color_printf(5, 27, FONTID_10X16F, "Входов\r\nВыходов");
-#endif
+            // Количество входов и выходов
+            #ifndef RUS_LANG
+                disp1color_printf(5, 27, FONTID_10X16F, "Inputs\r\nOutputs");
+            #else
+                disp1color_printf(5, 27, FONTID_10X16F, "Входов\r\nВыходов");
+            #endif
             disp1color_printf(100, 27, FONTID_10X16F, "%d\r\n%d", InputsCount_Par, OutputsCount_Par);
         }
 
         // Если сейчас 3 этап настройки,
         else if (SetupStage_State == SETUP_PAGE3)
         {
-// Порядок расположения входов/выходов
-#ifndef RUS_LANG
-            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "I/O order");
-#else
-            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Порядок");
-#endif
+            // Порядок расположения входов/выходов
+            #ifndef RUS_LANG
+                disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "I/O order");
+            #else
+                disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Порядок");
+            #endif
             disp1color_DrawRectangle(13, 60, DISP1COLOR_Width - 15, 65);
 
             if (InOutOrder_Par == IN_OUT)
@@ -122,12 +114,12 @@ void Display_Update(void)
         // Если сейчас 4 этап настройки,
         else if (SetupStage_State == SETUP_PAGE4)
         {
-//  Режим отображения входов/выходов
-#ifndef RUS_LANG
-            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Display");
-#else
-            disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Отображение");
-#endif
+            //  Режим отображения входов/выходов
+            #ifndef RUS_LANG
+                disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Display");
+            #else
+                disp1color_printfCenterAlign(0, 27, FONTID_10X16F, "Отображение");
+            #endif
             disp1color_DrawRectangle(12, 44, DISP1COLOR_Width - 1 - 12, DISP1COLOR_Height - 1);
 
             if (IODisplayMode_Par == NUMBERS)
@@ -141,18 +133,8 @@ void Display_Update(void)
         }
         */
     }
-
-    // Вывести буфер кадра на дисплей
-    disp1color_UpdateFromBuff();
-}
-
-/**
-  * @brief  Функция вывода на дисплей приветствия.
-  * @retval Нет
-  */
-void Display_Intro(void)
-{
-
+    
+    disp1color_UpdateFromBuff(); // Вывести буфер кадра на дисплей
 }
 
 /**

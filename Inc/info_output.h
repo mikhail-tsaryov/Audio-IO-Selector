@@ -7,8 +7,11 @@
 #include "ext_flash.h"
 
 void SerialInfoOutput_PrintWelcomeInfo(void);
-void SerialInfoOutput_PrintGoodbyeInfo(void);
+void SerialInfoOutput_PrintSaveMessage(void);
+void SerialInfoOutput_PrintLoadMessage(void);
 void SerialInfoOutput_PrintSavedParameters(uint32_t *pAddr);
 void SerialInfoOutput_PrintLoadedParameters(void);
+void SerialInfoOutput_PrintGoodbyeInfo(void);
+void SerialInfoOutput_PrintButtonEvent(void);
 
 #endif
