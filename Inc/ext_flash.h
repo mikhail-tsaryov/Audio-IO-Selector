@@ -27,7 +27,7 @@
 #define AAI 0x40 // Mask for Status Register AAI (Auto Address Increment Programming status) bit
 #define BPL 0x80 // Mask for Status Register BPL (BPx block protect bit read-only protect) bit
 
-extern char UART_BufSrting[32];
+extern char UART_BufSrtingTransmit[32];
 
 void ExternalFlash_Init(void);
 uint32_t ExternalFlash_ReadIdentification(void);

@@ -70,6 +70,7 @@
                 "PLATFORMIO=40301",
                 "STM32F103xB",
                 "STM32F1",
+                "F1",
                 "USE_HAL_DRIVER",
                 "F_CPU=72000000L",
                 ""

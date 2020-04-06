@@ -2,7 +2,6 @@
 #include "ext_flash.h"
 #include "spi.h"
 #include "usart.h"
-#include "info_output.h"
 
 /**
   * @brief Функция инициализации

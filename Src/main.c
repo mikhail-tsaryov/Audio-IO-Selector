@@ -34,7 +34,6 @@
 #include "buttons.h"
 #include "display.h"
 #include "ext_flash.h"
-#include "info_output.h"
 #include "relays.h"
 /* USER CODE END Includes */
 
@@ -45,7 +44,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define USE_HAL_UART_REGISTER_CALLBACKS 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -74,6 +73,7 @@ volatile uint8_t RelaysUpdate_Task = FALSE;
 volatile uint8_t RelaysModuleUpdate_Task = FALSE;
 volatile uint8_t DisplayUpdate_Task = FALSE;
 volatile uint8_t DisplayWelcome_Task = FALSE;
+volatile uint8_t UARTCommandsProcessing_Task = FALSE;
 // Additional flags
 volatile uint8_t AllowSaveMute_Flag = FALSE;
 
@@ -97,6 +97,10 @@ uint8_t OutputButton_State = OPEN;
 uint8_t LockButton_State = OPEN;   // Virtual button - long press INPUT
 uint8_t MuteButton_State = OPEN;   // Virtual button - long press OUTPUT
 
+char UART_BufSrtingTransmit[32];
+char UART_BufSrtingReceive;
+
+extern void initialise_monitor_handles(void);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -126,7 +130,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -143,24 +146,22 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
+  //initialise_monitor_handles();
   ExternalFlash_Init();
-
-    // OLED Init
-    disp1color_Init();
+  disp1color_Init();
     disp1color_SetBrightness(255);
     disp1color_Sleep();
 
     // Enable Power LED
     PowerLED_On();
-
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)&UART_BufSrtingReceive, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
     while (1)
     {
-        Tasks_Pooling();
-        
+        Tasks_Pooling(); 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -219,6 +220,7 @@ void Tasks_Pooling(void)
     if (ScanButtonsShort_Task == TRUE)
     {
         ScanButtonsShort_Task = FALSE;
+        //printf("Short scan!\n");
         ShortButtonPresses_Pooling();
     }
 
@@ -226,6 +228,7 @@ void Tasks_Pooling(void)
     if (ScanButtonsLong_Task == TRUE)
     {
         ScanButtonsLong_Task = FALSE;
+        //printf("Long scan!\n");
         LongButtonPresses_Pooling();
     }
 
@@ -241,6 +244,14 @@ void Tasks_Pooling(void)
     {
         DisplayUpdate_Task = FALSE;
         Display_Update();
+    }
+
+    // Если есть задача обработки команды UART
+    if (UARTCommandsProcessing_Task == TRUE)
+    {
+        UARTCommandsProcessing_Task = FALSE;
+        UARTCommands_Processing(UART_BufSrtingReceive);
+        //HAL_UART_Transmit(&huart1, (uint8_t *)&UART_BufSrtingReceive, strlen(UART_BufSrtingReceive), HAL_MAX_DELAY);
     }
 }
 
@@ -264,15 +275,13 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
   */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-    if (huart == &huart1)
-    {
-        // TODO: Описать прием команд по UART
-        /* Нужно реализовать дополнительный режим работы - режим конфигурации, 
-        в котором будет вызываться функция HAL_UART_Receive_IT, приниматься данные, 
-        и по данному прерыванию они будут анализироваться.
-        Подробнее - https://istarik.ru/blog/stm32/120.html
-        */
-    }
+    UARTCommandsProcessing_Task = TRUE;
+    //HAL_GPIO_TogglePin(LED_DBG_GPIO_Port, LED_DBG_Pin);
+    /*
+    sprintf(UART_BufSrtingTransmit, "aio hello");
+    HAL_UART_Transmit(&huart1, (uint8_t *)&UART_BufSrtingTransmit, strlen(UART_BufSrtingTransmit), HAL_MAX_DELAY);
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)&UART_BufSrtingReceive, 1);
+    */
 }
 
 /* USER CODE END 4 */

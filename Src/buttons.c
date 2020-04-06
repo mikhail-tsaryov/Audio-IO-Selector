@@ -306,6 +306,7 @@ void ShortButtonPresses_Pooling(void)
         if (PowerButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки POWER
+            SerialInfoOutput_PrintButtonEvent();
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             PowerButton_State = OPEN;
             ShortPressPowerButton_Handler();
@@ -325,6 +326,7 @@ void ShortButtonPresses_Pooling(void)
         if (InputButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки INPUT
+            SerialInfoOutput_PrintButtonEvent();
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             InputButton_State = OPEN;
             ShortPressInputButton_Handler();
@@ -344,6 +346,7 @@ void ShortButtonPresses_Pooling(void)
         if (OutputButton_State == CLOSE)
         {
             // Зафиксировано короткое нажатие кнопки OUTPUT
+            SerialInfoOutput_PrintButtonEvent();
             CountdownLongPress_Task = FALSE; // Снимаем задачу отсчета времени долгого нажатия
             OutputButton_State = OPEN;
             ShortPressOutputButton_Handler();

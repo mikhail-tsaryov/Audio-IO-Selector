@@ -7,7 +7,6 @@
 #include "disp1color.h"
 #include "usart.h"
 #include "display.h"
-#include "info_output.h"
 
 extern uint32_t SaveStartAddr;
 

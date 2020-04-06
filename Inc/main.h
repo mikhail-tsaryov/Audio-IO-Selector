@@ -100,6 +100,9 @@ extern uint8_t OutputButton_State;
 extern uint8_t LockButton_State; // Virtual button - long press Input
 extern uint8_t MuteButton_State; // Virtual button - long press Output
 
+extern char UART_BufSrtingTransmit[32];
+extern char UART_BufSrtingReceive;
+
 extern void Tasks_Pooling(void);
 
 /* USER CODE END EFP */
@@ -180,7 +183,7 @@ extern void Tasks_Pooling(void);
 #define IN_OUT 0 // Inputs/outputs
 #define OUT_IN 1 // Outputs/inputs
 
-    /* USER CODE END Private defines */
+/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
