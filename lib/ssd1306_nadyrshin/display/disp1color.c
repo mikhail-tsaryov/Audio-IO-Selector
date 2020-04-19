@@ -357,15 +357,15 @@ int16_t dispcolor_getStrWidth(uint8_t FontID, char *Str)
   {
     switch (*Str)
     {
-    case '\0':  // Конец строки
-      done = 1;
-      break;
-    case '\n':  // Переход на следующую строку
-    case '\r':  // Переход в начало строки
-      break;
-    default:    // Отображаемый символ
-      StrWidth += font_GetCharWidth(font_GetFontStruct(FontID, *Str));
-      break;
+        case '\0':  // Конец строки
+            done = 1;
+            break;
+        case '\n':  // Переход на следующую строку
+        case '\r':  // Переход в начало строки
+            break;
+        default:    // Отображаемый символ
+            StrWidth += font_GetCharWidth(font_GetFontStruct(FontID, *Str));
+            break;
     }
     Str++;
   }
